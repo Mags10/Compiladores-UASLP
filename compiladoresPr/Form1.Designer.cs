@@ -58,7 +58,6 @@
             this.textExpresion.Name = "textExpresion";
             this.textExpresion.Size = new System.Drawing.Size(180, 22);
             this.textExpresion.TabIndex = 1;
-            this.textExpresion.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
             // 
             // textPosfija
             // 
@@ -66,7 +65,6 @@
             this.textPosfija.Name = "textPosfija";
             this.textPosfija.Size = new System.Drawing.Size(180, 22);
             this.textPosfija.TabIndex = 2;
-            this.textPosfija.TextChanged += new System.EventHandler(this.textBox2_TextChanged);
             // 
             // label1
             // 
@@ -117,7 +115,6 @@
             this.label4.Size = new System.Drawing.Size(381, 16);
             this.label4.TabIndex = 7;
             this.label4.Text = "Identificador Fundamentos de Compiladores-Deadline";
-            this.label4.Click += new System.EventHandler(this.label4_Click);
             // 
             // label5
             // 
@@ -127,7 +124,6 @@
             this.label5.Size = new System.Drawing.Size(197, 16);
             this.label5.TabIndex = 8;
             this.label5.Text = "Miguel Alejandro Gutierrez Silva";
-            this.label5.Click += new System.EventHandler(this.label5_Click);
             // 
             // label6
             // 
