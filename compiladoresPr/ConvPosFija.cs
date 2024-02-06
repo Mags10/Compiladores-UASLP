@@ -36,6 +36,7 @@ namespace compiladoresPr
                 { '*', 2 },
                 { '/', 2 }
             };
+
         }
 
         // Constructor con parámetros
@@ -59,7 +60,7 @@ namespace compiladoresPr
 
         #region Métodos
 
-        public string Convertir(string expresion)
+        public string ConvertirPosFija(string expresion)
         {
             // Excepciones
             if (expresion == null)
@@ -124,6 +125,91 @@ namespace compiladoresPr
             }
             // Mostramos la salida posfija en el textbox correspondiente
             return string.Join("", posfija.ToArray());
+        }
+
+        public string ConvertirPosFija2(string expression)
+        {
+            pila.Clear();
+            string output = "";
+            bool band;
+            foreach (char c in expression)
+            {
+                switch (c)
+                {
+                    case '(':
+                        pila.Push(c);
+                        break;
+                    case ')':
+                        while (pila.Peek() != '(')
+                        {
+                            output += pila.Pop();
+                            if (pila.Count == 0) throw new ArgumentException("Sintaxis incorrecta, paréntesis desbalanceados");
+                        }
+                        pila.Pop();
+                        break;
+                    default:
+                        if (!precedencia.ContainsKey(c)) output += c;
+                        else
+                        {
+                            band = true;
+                            while (band)
+                            {
+                                if (pila.Count == 0 || pila.Peek() == '(' || precedencia[c] > precedencia[pila.Peek()])
+                                {
+                                    pila.Push(c);
+                                    band = false;
+                                }
+                                else output += pila.Pop();
+                            }
+                        }
+                        break;
+                }
+            }
+            while (pila.Count > 0)
+            {
+                char tmp = pila.Pop();
+                if (tmp == '(') throw new ArgumentException("Sintaxis incorrecta, paréntesis desbalanceados");
+                output += tmp;
+            }
+            return output;
+        }
+
+        private string RangeNormalizer(string expresion)
+        {
+            if (expresion.Count(x => x == '[') != expresion.Count(x => x == ']'))
+            {
+                throw new ArgumentException("Sintaxis incorrecta, formato de rango inválido");
+            }
+            while (expresion.Contains("[") || expresion.Contains("]"))
+            {
+                string tmp = expresion.Substring(expresion.IndexOf('['), expresion.IndexOf(']') - expresion.IndexOf('[') + 1 );
+                if (tmp.Count() != 5)
+                {
+                    throw new ArgumentException("Sintaxis incorrecta, rango de caracteres inválido");
+                }
+                if (tmp[1] >= tmp[3])
+                {
+                    throw new ArgumentException("Sintaxis incorrecta, rango de caracteres inválido");
+                }
+                string newExp = "(";
+                for (char c = tmp[1]; c <= tmp[3]; c++)
+                {
+                    if (newExp.Count() > 1) newExp += "|";
+                    newExp += c;
+                }
+                newExp += ")";
+                expresion = expresion.Replace(tmp, newExp);
+            }
+            return expresion;
+        }
+
+        public string ConcatNormalizer(string expresion)
+        {
+            List<char> unitOper = new List<char> { '*', '+', '?' }; 
+            List<char> binaOper = new List<char> { '&', '|' };
+            string output = "";
+            string tmp = "";
+            return null;
         }
 
         #endregion

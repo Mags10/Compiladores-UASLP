@@ -26,5 +26,11 @@ namespace compiladoresPr
             string res = conv.Convertir(textExpresion.Text);
             textPosfija.Text = res;
         }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            string res = conv.Convertir2(textExpresion.Text);
+            textBox1.Text = res;
+        }
     }
 }
