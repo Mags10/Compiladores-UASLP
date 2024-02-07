@@ -37,6 +37,19 @@ namespace compiladoresPr
                 { '/', 2 }
             };
 
+
+            // test concat normalizer
+
+            string test = "aasd*dasd|bb+asf";
+            string test2 = "ab|c";
+            string test3 = "ab|cd";
+
+            Console.WriteLine("Test 1: " + test);
+            Console.WriteLine(ConcatNormalizer(test));
+            Console.WriteLine("Test 2: " + test2);
+            Console.WriteLine(ConcatNormalizer(test2));
+            Console.WriteLine("Test 3: " + test3);
+            Console.WriteLine(ConcatNormalizer(test3));
         }
 
         // Constructor con parámetros
@@ -209,7 +222,69 @@ namespace compiladoresPr
             List<char> binaOper = new List<char> { '&', '|' };
             string output = "";
             string tmp = "";
-            return null;
+
+            if (unitOper.Contains(expresion[0]) || binaOper.Contains(expresion[0]))
+            {
+                throw new ArgumentException("Sintaxis incorrecta, operador binario o unario inválido");
+            }
+
+            bool band = false;
+
+            for (int i = 0; i < expresion.Count(); i++)
+            {
+                string word = "";
+                if (expresion[i] == '(')
+                {
+                    word += "(";
+                    while (expresion[i] != ')')
+                    {
+                        word += expresion[i];
+                        i++;
+                    }
+                    word += ")";
+                }
+                else
+                {
+                    word += expresion[i];
+                }
+                if (i + 1 == expresion.Count())
+                {
+                    i--;
+                    band = true;
+                }
+                i++;
+                if (unitOper.Contains(expresion[i]))
+                {
+                    word += expresion[i];
+                }
+                else if (binaOper.Contains(expresion[i]))
+                {
+                    word += expresion[i];
+                    i++;
+                    if (expresion[i] == '(')
+                    {
+                        word += "(";
+                        while (expresion[i] != ')')
+                        {
+                            word += expresion[i];
+                            i++;
+                        }
+                        word += ")";
+                    }
+                    else
+                    {
+                        word += expresion[i];
+                    }
+                }
+                else
+                {
+                    i--;
+                }
+                if (output.Count() > 0) output += "&";
+                output += word;
+                if (band) break;
+            }
+            return output;
         }
 
         #endregion
