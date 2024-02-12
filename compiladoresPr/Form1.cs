@@ -23,14 +23,9 @@ namespace compiladoresPr
 
         private void button1_Click_1(object sender, EventArgs e)
         {
-            string res = conv.ConvertirPosFija(textExpresion.Text);
-            textPosfija.Text = res;
-        }
-
-        private void button2_Click(object sender, EventArgs e)
-        {
-            string res = conv.ConvertirPosFija2(textExpresion.Text);
+            string res = conv.NormaliceExpresion(textExpresion.Text);
             textBox1.Text = res;
+            textPosfija.Text = conv.ConvertirPosFija(res);
         }
     }
 }

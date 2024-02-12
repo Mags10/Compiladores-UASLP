@@ -38,7 +38,6 @@
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
             this.label7 = new System.Windows.Forms.Label();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.panel1.SuspendLayout();
@@ -51,7 +50,7 @@
             this.panel1.Controls.Add(this.label5);
             this.panel1.Controls.Add(this.label4);
             this.panel1.Location = new System.Drawing.Point(0, 0);
-            this.panel1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.panel1.Margin = new System.Windows.Forms.Padding(2);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(506, 89);
             this.panel1.TabIndex = 0;
@@ -91,15 +90,15 @@
             // textExpresion
             // 
             this.textExpresion.Location = new System.Drawing.Point(41, 154);
-            this.textExpresion.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textExpresion.Margin = new System.Windows.Forms.Padding(2);
             this.textExpresion.Name = "textExpresion";
             this.textExpresion.Size = new System.Drawing.Size(136, 20);
             this.textExpresion.TabIndex = 1;
             // 
             // textPosfija
             // 
-            this.textPosfija.Location = new System.Drawing.Point(41, 214);
-            this.textPosfija.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textPosfija.Location = new System.Drawing.Point(41, 256);
+            this.textPosfija.Margin = new System.Windows.Forms.Padding(2);
             this.textPosfija.Name = "textPosfija";
             this.textPosfija.Size = new System.Drawing.Size(136, 20);
             this.textPosfija.TabIndex = 2;
@@ -129,7 +128,7 @@
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(40, 199);
+            this.label3.Location = new System.Drawing.Point(40, 241);
             this.label3.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(49, 13);
@@ -139,7 +138,7 @@
             // button1
             // 
             this.button1.Location = new System.Drawing.Point(68, 177);
-            this.button1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.button1.Margin = new System.Windows.Forms.Padding(2);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(108, 19);
             this.button1.TabIndex = 6;
@@ -147,31 +146,20 @@
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click_1);
             // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(218, 177);
-            this.button2.Margin = new System.Windows.Forms.Padding(2);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(108, 19);
-            this.button2.TabIndex = 9;
-            this.button2.Text = "Convertir a posfija";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
-            // 
             // label7
             // 
             this.label7.AutoSize = true;
             this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label7.Location = new System.Drawing.Point(190, 199);
+            this.label7.Location = new System.Drawing.Point(40, 198);
             this.label7.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(49, 13);
+            this.label7.Size = new System.Drawing.Size(117, 13);
             this.label7.TabIndex = 8;
-            this.label7.Text = "Posfija:";
+            this.label7.Text = "Expresion explicita:";
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(191, 214);
+            this.textBox1.Location = new System.Drawing.Point(41, 213);
             this.textBox1.Margin = new System.Windows.Forms.Padding(2);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(136, 20);
@@ -182,7 +170,6 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(504, 379);
-            this.Controls.Add(this.button2);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.button1);
@@ -213,7 +200,6 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.TextBox textBox1;
     }

@@ -27,120 +27,19 @@ namespace compiladoresPr
             posfija = new Queue<char>();
             precedencia = new Dictionary<char, int>
             {
-                // Asignación de la precedencia de los operadores
-                //Defincion de prioridad de operadores
-                { '(', 0 },
-                //precedencia.Add(')', 3);
+                { '*', 1 },
+                { '?', 1 },
                 { '+', 1 },
-                { '-', 1 },
-                { '*', 2 },
-                { '/', 2 }
+                { '&', 0 },
+                { '|', 0 }
             };
-
-
-            // test concat normalizer
-
-            string test = "aasd*dasd|bb+asf";
-            string test2 = "ab|c";
-            string test3 = "ab|cd";
-
-            Console.WriteLine("Test 1: " + test);
-            Console.WriteLine(ConcatNormalizer(test));
-            Console.WriteLine("Test 2: " + test2);
-            Console.WriteLine(ConcatNormalizer(test2));
-            Console.WriteLine("Test 3: " + test3);
-            Console.WriteLine(ConcatNormalizer(test3));
-        }
-
-        // Constructor con parámetros
-        public ConvPosFija(Dictionary<char, int> precedencia)
-        {
-            if (precedencia == null)
-            {
-                throw new ArgumentNullException("La precedencia es nula");
-            }
-            if (precedencia.Count == 0)
-            {
-                throw new ArgumentException("La precedencia está vacía");
-            }
-            // Inicialización de variables
-            pila = new Stack<char>();
-            posfija = new Queue<char>();
-            this.precedencia = precedencia;
         }
 
         #endregion
 
         #region Métodos
 
-        public string ConvertirPosFija(string expresion)
-        {
-            // Excepciones
-            if (expresion == null)
-            {
-                throw new ArgumentNullException("La expresión es nula");
-            }
-            if (expresion.Length == 0)
-            {
-                throw new ArgumentException("La expresión está vacía");
-            }
-
-            // Limpiar la pila y la cola
-            pila.Clear();
-            posfija.Clear();
-            // Recorrer cada caracter de la expresión
-            foreach (char c in expresion)
-            {
-                // Si es un operando, lo agregamos a la cola
-                //funcion para checar que c no se encuentre en la lista de precedencia
-
-                if (!precedencia.ContainsKey(c))
-                {
-                    posfija.Enqueue(c);
-                }
-                /*// Si es un paréntesis izquierdo, lo agregamos a la pila
-                else if (c == '(' || c ==')')
-                {
-                    pila.Push(c);
-                }
-                // Si es un paréntesis derecho, desapilamos hasta encontrar el paréntesis izquierdo
-                else if (c == ')')
-                {
-                    while (pila.Peek() != '(')
-                    {
-                        posfija.Enqueue(pila.Pop());
-                    }
-                    pila.Pop(); // Eliminamos el paréntesis izquierdo
-                }*/
-                // Si es un operador, lo comparamos con el tope de la pila
-                else if (precedencia.ContainsKey(c))
-                {
-                    // Si la pila está vacía o el operador tiene mayor precedencia que el tope, lo apilamos
-                    if (pila.Count == 0 || precedencia[c] > precedencia[pila.Peek()])
-                    {
-                        pila.Push(c);
-                    }
-                    // Si el operador tiene menor o igual precedencia que el tope, desapilamos hasta que se cumpla lo contrario y luego apilamos el operador
-                    else
-                    {
-                        while (pila.Count > 0 && precedencia[c] <= precedencia[pila.Peek()])
-                        {
-                            posfija.Enqueue(pila.Pop());
-                        }
-                        pila.Push(c);
-                    }
-                }
-            }
-            // Al terminar de recorrer la expresión, desapilamos todo lo que queda en la pila y lo agregamos a la cola
-            while (pila.Count > 0)
-            {
-                posfija.Enqueue(pila.Pop());
-            }
-            // Mostramos la salida posfija en el textbox correspondiente
-            return string.Join("", posfija.ToArray());
-        }
-
-        public string ConvertirPosFija2(string expression)
+        public string ConvertirPosFija(string expression)
         {
             pila.Clear();
             string output = "";
@@ -187,6 +86,14 @@ namespace compiladoresPr
             return output;
         }
 
+        public string NormaliceExpresion(string expresion)
+        {
+            expresion = expresion.Replace(" ", "");
+            expresion = RangeNormalizer(expresion);
+            expresion = ConcatNormalizer(expresion);
+            return expresion;
+        }
+
         private string RangeNormalizer(string expresion)
         {
             if (expresion.Count(x => x == '[') != expresion.Count(x => x == ']'))
@@ -196,19 +103,35 @@ namespace compiladoresPr
             while (expresion.Contains("[") || expresion.Contains("]"))
             {
                 string tmp = expresion.Substring(expresion.IndexOf('['), expresion.IndexOf(']') - expresion.IndexOf('[') + 1 );
-                if (tmp.Count() != 5)
-                {
-                    throw new ArgumentException("Sintaxis incorrecta, rango de caracteres inválido");
-                }
-                if (tmp[1] >= tmp[3])
-                {
-                    throw new ArgumentException("Sintaxis incorrecta, rango de caracteres inválido");
-                }
                 string newExp = "(";
-                for (char c = tmp[1]; c <= tmp[3]; c++)
+                if (tmp.Contains("-"))
                 {
-                    if (newExp.Count() > 1) newExp += "|";
-                    newExp += c;
+                    if (tmp.Count() != 5)
+                    {
+                        throw new ArgumentException("Sintaxis incorrecta, rango de caracteres inválido " + tmp);
+                    }
+                    if (tmp[1] > tmp[3])
+                    {
+                        throw new ArgumentException("Sintaxis incorrecta, rango de caracteres inválido " + tmp);
+                    }
+                    for (char c = tmp[1]; c <= tmp[3]; c++)
+                    {
+                        if (precedencia.ContainsKey(c)) throw new ArgumentException("Sintaxis incorrecta, el rango " + tmp + " contene operaciones reservadas.");
+                        if (newExp.Count() > 1) newExp += "|";
+                        newExp += c;
+                    }
+                }
+                else
+                {
+                    List<char> lstmp = new List<char>();
+                    for (int i = 1; i < tmp.Count() - 1; i++)
+                    {
+                        if (precedencia.ContainsKey(tmp[i])) throw new ArgumentException("Sintaxis incorrecta, el rango " + tmp + " contene operaciones reservadas.");
+                        if (newExp.Count() > 1) newExp += "|";
+                        if (!lstmp.Contains(tmp[i])) newExp += tmp[i];
+                        else newExp = newExp.Remove(newExp.Count() - 1);
+                        lstmp.Add(tmp[i]);
+                    }
                 }
                 newExp += ")";
                 expresion = expresion.Replace(tmp, newExp);
@@ -221,69 +144,120 @@ namespace compiladoresPr
             List<char> unitOper = new List<char> { '*', '+', '?' }; 
             List<char> binaOper = new List<char> { '&', '|' };
             string output = "";
-            string tmp = "";
+
+            while (expresion.Contains("()"))
+            {
+                // get the first ocurrence of "()"
+                int index = expresion.IndexOf("()");
+                // remove the ocurrence
+                expresion = expresion.Remove(index, 2);
+                if (index == expresion.Count()) break;
+                if (unitOper.Contains(expresion[index]))
+                {
+                    expresion = expresion.Remove(index, 1);
+                }
+                if (index == expresion.Count()) break;
+                if (binaOper.Contains(expresion[index]))
+                {
+                    throw new ArgumentException("Sintaxis incorrecta, operador binario sin operando");
+                }
+            }
 
             if (unitOper.Contains(expresion[0]) || binaOper.Contains(expresion[0]))
             {
                 throw new ArgumentException("Sintaxis incorrecta, operador binario o unario inválido");
             }
 
-            bool band = false;
+            if (expresion.Contains("[") || expresion.Contains("]"))
+            {
+                throw new ArgumentException("Sintaxis incorrecta, existen rangos de caracteres no normalizados");
+            }
+
+            if (expresion.Count(x => x == '(') != expresion.Count(x => x == ')'))
+            {
+                throw new ArgumentException("Sintaxis incorrecta, paréntesis desbalanceados");
+            }
 
             for (int i = 0; i < expresion.Count(); i++)
             {
-                string word = "";
-                if (expresion[i] == '(')
+                // funcion interna para encontrar palabras
+                string findWord()
                 {
-                    word += "(";
-                    while (expresion[i] != ')')
-                    {
-                        word += expresion[i];
-                        i++;
-                    }
-                    word += ")";
-                }
-                else
-                {
-                    word += expresion[i];
-                }
-                if (i + 1 == expresion.Count())
-                {
-                    i--;
-                    band = true;
-                }
-                i++;
-                if (unitOper.Contains(expresion[i]))
-                {
-                    word += expresion[i];
-                }
-                else if (binaOper.Contains(expresion[i]))
-                {
-                    word += expresion[i];
-                    i++;
+                    string wordtmp = "";
                     if (expresion[i] == '(')
                     {
-                        word += "(";
-                        while (expresion[i] != ')')
+                        i++;
+                        int cp = 1;
+                        while (cp != 0)
                         {
-                            word += expresion[i];
+                            wordtmp += expresion[i];
                             i++;
+                            if (expresion[i] == '(') cp++;
+                            if (expresion[i] == ')') cp--;
                         }
-                        word += ")";
+                        if (wordtmp.Count() > 1) wordtmp = "(" + ConcatNormalizer(wordtmp) + ")";
                     }
                     else
                     {
-                        word += expresion[i];
+                        wordtmp += expresion[i];
+                    }
+                    if (i + 1 != expresion.Count())
+                    {
+                        if (unitOper.Contains(expresion[i + 1]))
+                        {
+                            i++;
+                            wordtmp += expresion[i];
+                        }
+                        checkWordIntegrity(0);
+                    }
+                    return wordtmp;
+                }
+
+                void checkWordIntegrity(int c)
+                {
+                    switch (c)
+                    {
+                        case 0:
+                            if (i + 1 == expresion.Count()) return;
+                            if (unitOper.Contains(expresion[i + 1]))
+                            {
+                                throw new ArgumentException("Sintaxis incorrecta, operador unario no seguido de otro operador unario");
+                            }
+                            break;
+                        case 1:
+                            if (i + 1 != expresion.Count())
+                            {
+                                if (binaOper.Contains(expresion[i + 1]))
+                                {
+                                    throw new ArgumentException("Sintaxis incorrecta, operador binario no puede ser seguido de otro operador binario");
+                                }
+                            }
+                            else
+                            {
+                                throw new ArgumentException("Sintaxis incorrecta, operador binario no seguido de operando");
+                            }
+                        break;
                     }
                 }
-                else
+
+                string word = findWord();
+                
+                if (i + 1 != expresion.Count())
                 {
-                    i--;
+                    while (binaOper.Contains(expresion[i + 1]))
+                    {
+                        i++;
+                        word += expresion[i];
+                        checkWordIntegrity(1);
+                        i++;
+                        word += findWord();
+                        if (i + 1 == expresion.Count()) break;
+                    }
                 }
                 if (output.Count() > 0) output += "&";
                 output += word;
-                if (band) break;
             }
+            
             return output;
         }
 
