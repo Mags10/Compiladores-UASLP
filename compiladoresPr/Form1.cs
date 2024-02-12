@@ -12,14 +12,20 @@ namespace compiladoresPr
 {
     public partial class Form1 : Form
     {
+
+        ConvPosFija conv;
+
         public Form1()
-        {
+        { 
             InitializeComponent();
+            conv = new ConvPosFija();
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void button1_Click_1(object sender, EventArgs e)
         {
-
+            string res = conv.NormaliceExpresion(textExpresion.Text);
+            textBox1.Text = res;
+            textPosfija.Text = conv.ConvertirPosFija(res);
         }
     }
 }
