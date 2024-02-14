@@ -264,4 +264,129 @@ namespace compiladoresPr
 
         #endregion
     }
+    public class EvaPosFija
+    {
+        #region Atributos
+
+        private Stack<char> infija; // Cola para almacenar la evaluacion infija
+        private Stack<char> pila; // Pila para almacenar los operadores
+        private Stack<char> tempo; // Pila para almacenar la pila temporalmente
+        private Dictionary<char, int> preceUna; // Diccionario para almacenar la precedencia de los operadores unarios
+        private Dictionary<char, int> preceBin; // Diccionario para almacenar la precedencia de los operadores binarios
+
+
+        #endregion
+
+        #region Constructores
+        public EvaPosFija(String posfija)
+        {
+            // Inicialización de variables
+            pila = new Stack<char>();
+            tempo = new Stack<char>();
+            infija = new Stack<char>();
+            infija.Clear();
+            foreach (char c in posfija.Reverse())
+            {
+                infija.Push(c);
+                Console.WriteLine(c);
+            }
+            preceUna = new Dictionary<char, int>
+            {
+                { '*', 0 },
+                { '?', 1 },
+                { '+', 0 },              
+            };
+            preceBin = new Dictionary<char, int>
+            {
+                { '&', 0 },
+                { '|', 0 },
+            };
+        }
+        #endregion 
+
+        #region Métodos
+
+        public String EvaluarPosFija()
+        {
+            int cont= 0;
+            pila.Clear();
+            tempo.Clear();
+            foreach (char c in infija)
+            {
+                tempo.Clear();
+                Console.WriteLine("dentro de eva"+c);
+                if(!preceBin.ContainsKey(c) && !preceUna.ContainsKey(c))
+                {
+                    pila.Push(c);
+                    Console.WriteLine(pila.Peek());
+                }
+                else
+                {
+                    if(preceBin.ContainsKey(c))
+                    {
+                        char tmp = pila.Pop();
+                        pila.Push(c);
+                        Console.WriteLine(pila.Peek());
+                        pila.Push(tmp);
+                    }
+                    else if(preceUna.ContainsKey(c))
+                    {
+
+                        //char ope = pila.Pop();
+                        pila.Push(c);
+                        Console.WriteLine(pila.Peek());
+                        char tmp1 = pila.Pop();
+
+                        if (!preceUna.ContainsKey(pila.Peek()) && !preceBin.ContainsKey(pila.Peek()) )
+                        {
+                            
+                            foreach (char d in pila.Reverse())
+                            {
+                                
+                                if (preceUna.ContainsKey(d))
+                                {
+                                    tempo.Push(d);
+                                    tempo.Push('(');                            
+                                    
+            
+                                }                                   
+                                else if(!preceUna.ContainsKey(d))
+                                    tempo.Push(d);
+                            }
+                            tempo.Push(')');
+                            pila.Clear();
+                            foreach (char r in tempo.Reverse())
+                            {
+                                pila.Push(r);
+                            }
+                            tempo.Clear();
+                            pila.Push(tmp1);
+                        }
+                        else { 
+                            pila.Push(tmp1);
+                        }
+                        
+                    }
+                }
+                foreach (char t in pila.Reverse())
+                {
+                    cont++;
+                    Console.WriteLine("vuelta "+" "+cont +" "+ t);
+                }
+            }
+            string tmp2 = "";
+            foreach (char d in pila.Reverse())
+            {
+                tmp2 += d;
+                Console.WriteLine("dentro de ciclo final "+" "+ d);
+            }
+            if (pila.Count != 0) {
+
+                return tmp2;
+            }   
+                
+            return "No se pudo evaluar la expresion "+" "+tmp2;
+        }
+        #endregion
+    }
 }
