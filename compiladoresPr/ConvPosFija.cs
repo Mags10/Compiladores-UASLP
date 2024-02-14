@@ -27,11 +27,11 @@ namespace compiladoresPr
             posfija = new Queue<char>();
             precedencia = new Dictionary<char, int>
             {
-                { '*', 1 },
-                { '?', 1 },
-                { '+', 1 },
-                { '&', 0 },
-                { '|', 0 }
+                { '*', 2 },
+                { '?', 2 },
+                { '+', 2 },
+                { '|', 0 },
+                { '&', 1 }
             };
         }
 
@@ -188,6 +188,7 @@ namespace compiladoresPr
                     {
                         i++;
                         int cp = 1;
+                        if (expresion[i] == '(') cp++;
                         while (cp != 0)
                         {
                             wordtmp += expresion[i];
