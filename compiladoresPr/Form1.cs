@@ -14,6 +14,7 @@ namespace compiladoresPr
     {
 
         ConvPosFija conv;
+        EvaPosFija eva;
 
         public Form1()
         { 
@@ -26,6 +27,28 @@ namespace compiladoresPr
             string res = conv.NormaliceExpresion(textExpresion.Text);
             textBox1.Text = res;
             textPosfija.Text = conv.ConvertirPosFija(res);
+            string tmp = textPosfija.Text;
+            labEva.Text = tmp;
+            eva = new EvaPosFija(tmp);
+            string resEva = eva.EvaluarPosFija();
+            if (res == resEva) {
+                labEva.Text = "Es correcta la conversion";
+                textEva.Text = resEva;
+            }
+            else {
+                labEva.Text = "No es correcta la conversion";
+                 textEva.Text = resEva;
+                   };
+        }
+
+        private void textExpresion_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

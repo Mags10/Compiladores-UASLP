@@ -27,11 +27,11 @@ namespace compiladoresPr
             posfija = new Queue<char>();
             precedencia = new Dictionary<char, int>
             {
-                { '*', 1 },
-                { '?', 1 },
-                { '+', 1 },
-                { '&', 0 },
-                { '|', 0 }
+                { '*', 2 },
+                { '?', 2 },
+                { '+', 2 },
+                { '|', 0 },
+                { '&', 1 }
             };
         }
 
@@ -188,6 +188,7 @@ namespace compiladoresPr
                     {
                         i++;
                         int cp = 1;
+                        if (expresion[i] == '(') cp++;
                         while (cp != 0)
                         {
                             wordtmp += expresion[i];
@@ -261,6 +262,85 @@ namespace compiladoresPr
             return output;
         }
 
+        #endregion
+    }
+    public class EvaPosFija
+    {
+        #region Atributos
+
+        private Stack<char> infija; // Cola para almacenar la evaluacion infija
+        private Stack<String> pila; // Pila para almacenar los operadores
+        private Stack<String> tempo; // Pila para almacenar la pila temporalmente
+        private Dictionary<char, int> preceUna; // Diccionario para almacenar la precedencia de los operadores unarios
+        private Dictionary<char, int> preceBin; // Diccionario para almacenar la precedencia de los operadores binarios
+
+
+        #endregion
+
+        #region Constructores
+        public EvaPosFija(String posfija)
+        {
+            // Inicialización de variables
+            pila = new Stack<String>();
+            tempo = new Stack<String>();
+            infija = new Stack<char>();
+            infija.Clear();
+            foreach (char c in posfija.Reverse())
+            {
+                infija.Push(c);
+                Console.WriteLine(c);
+            }
+            preceUna = new Dictionary<char, int>
+            {
+                { '*', 0 },
+                { '?', 1 },
+                { '+', 0 },              
+            };
+            preceBin = new Dictionary<char, int>
+            {
+                { '&', 0 },
+                { '|', 0 },
+            };
+        }
+        #endregion 
+
+        #region Métodos
+
+        public String EvaluarPosFija()
+        {
+            int cont= 0;
+            pila.Clear();
+            tempo.Clear();
+            foreach (char c in infija)
+            {
+                tempo.Clear();
+                Console.WriteLine("dentro de eva"+c);
+                if(!preceBin.ContainsKey(c) && !preceUna.ContainsKey(c))
+                {
+                    pila.Push(c.ToString());
+                    Console.WriteLine(pila.Peek());
+                }
+                else
+                {
+                    if(preceBin.ContainsKey(c))
+                    {
+                       
+                    }
+                    else if(preceUna.ContainsKey(c))
+                    {                                      
+                        
+                    }
+                }
+         
+            }
+            string tmp2 = "";
+            if (pila.Count != 0) {
+
+                return tmp2;
+            }   
+                
+            return "No se pudo evaluar la expresion "+" "+tmp2;
+        }
         #endregion
     }
 }
