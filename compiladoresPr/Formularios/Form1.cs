@@ -1,4 +1,5 @@
-﻿using System;
+﻿using compiladoresPr.Formularios;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -15,15 +16,12 @@ namespace compiladoresPr
 
         ConvPosFija conv;
         EvaPosFija eva;
+        TransitionTable tt = null;
 
         public Form1()
         { 
             InitializeComponent();
             conv = new ConvPosFija();
-
-            Automata a = new Automata("ab|?b+&");
-            a.SetTransitionsTable(this.dataGridView1);
-
         }
 
         private void button1_Click_1(object sender, EventArgs e)
@@ -32,8 +30,6 @@ namespace compiladoresPr
             textBox1.Text = res;
             textPosfija.Text = conv.ConvertirPosFija(res);
             string tmp = textPosfija.Text;
-
-            
 
             labEva.Text = tmp;
             eva = new EvaPosFija(tmp);
@@ -48,5 +44,27 @@ namespace compiladoresPr
             };
         }
 
+        private void button2_Click(object sender, EventArgs e)
+        {
+            if (this.tt == null)
+            {
+                if (textPosfija.Text == "") return;
+                tt = new TransitionTable(textPosfija.Text);
+                tt.Show();
+            }
+            else
+            {
+                tt.update(textPosfija.Text);
+            }
+        }
+
+        private void textPosfija_TextChanged(object sender, EventArgs e)
+        {
+            if (this.tt != null)
+            {
+                tt.update(textPosfija.Text);
+                tt.Focus();
+            }
+        }
     }
 }

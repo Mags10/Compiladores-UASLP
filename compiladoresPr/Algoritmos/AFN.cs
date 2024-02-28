@@ -428,7 +428,21 @@ namespace compiladoresPr
 
         public void printAutomata()
         {
-            // Count transitions where value is epsilon
+            Console.WriteLine("---------------------------------------------------");
+            Console.WriteLine("Automata: ");
+            Console.WriteLine("Estados: " + statescount);
+            Console.WriteLine("Transiciones: " + getTransitionsCount());
+            Console.WriteLine("Transiciones epsilon: " + getEpsilonTransitionsCount());
+            Console.WriteLine("---------------------------------------------------");
+        }
+
+        public int getTransitionsCount()
+        {
+            return transitionsList.Count - 1;
+        }
+
+        public int getEpsilonTransitionsCount()
+        {
             int epsilonTransitions = 0;
             foreach (Transition transition in transitionsList)
             {
@@ -437,12 +451,7 @@ namespace compiladoresPr
                     epsilonTransitions++;
                 }
             }
-            Console.WriteLine("---------------------------------------------------");
-            Console.WriteLine("Automata: ");
-            Console.WriteLine("Estados: " + statescount);
-            Console.WriteLine("Transiciones: " + (transitionsList.Count - 1));
-            Console.WriteLine("Transiciones epsilon: " + epsilonTransitions);
-            Console.WriteLine("---------------------------------------------------");
+            return epsilonTransitions;
         }
 
         public List<List<List<string>>> GetTransitionsTable()
@@ -475,7 +484,8 @@ namespace compiladoresPr
             dv.Columns[0].Name = "Estados";
             for (int i = 0; i < alphabet.Count; i++)
             {
-                dv.Columns[i + 1].Name = alphabet[i].ToString();
+                if (alphabet[i] == '#') dv.Columns[i + 1].Name = "ε";
+                else dv.Columns[i + 1].Name = alphabet[i].ToString();
             }
             for (int i = 0; i < statesList.Count; i++)
             {
@@ -484,11 +494,18 @@ namespace compiladoresPr
                 for (int j = 0; j < alphabet.Count; j++)
                 {
                     string tmp = "";
+                    if (transitions[i][j].Count == 0)
+                    {
+                        dv.Rows[i].Cells[j + 1].Value = "Ø";
+                        continue;
+                    }
                     foreach (string name in transitions[i][j])
                     {
                         tmp += name;
                         tmp += ", ";
                     }
+                    tmp = tmp.Remove(tmp.Length - 2);
+                    tmp = "{" + tmp + "}";
                     dv.Rows[i].Cells[j + 1].Value = tmp;
                 }
             }
