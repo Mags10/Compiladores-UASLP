@@ -20,6 +20,10 @@ namespace compiladoresPr
         { 
             InitializeComponent();
             conv = new ConvPosFija();
+
+            Automata a = new Automata("ab|?b+&");
+            a.SetTransitionsTable(this.dataGridView1);
+
         }
 
         private void button1_Click_1(object sender, EventArgs e)
@@ -29,7 +33,7 @@ namespace compiladoresPr
             textPosfija.Text = conv.ConvertirPosFija(res);
             string tmp = textPosfija.Text;
 
-            Automata a = new Automata(tmp);
+            
 
             labEva.Text = tmp;
             eva = new EvaPosFija(tmp);

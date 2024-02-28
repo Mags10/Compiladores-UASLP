@@ -6,6 +6,7 @@ using System.Drawing.Printing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace compiladoresPr
 {
@@ -22,7 +23,8 @@ namespace compiladoresPr
         }
         public string Name
         {
-            get{ return name; }            
+            get{ return name; }        
+            set { name = value; }
         }
 
         public List<Transition> OutTransitions
@@ -105,6 +107,7 @@ namespace compiladoresPr
         public Transition(State source, State destination, char value)
         {
             Source = source;
+            Source.OutTransitions.Add(this);
             Destination = destination;
             Value = value;
         }
@@ -119,6 +122,7 @@ namespace compiladoresPr
         public Transition(Transition refe)
         {
             Source = refe.Source;
+            Source.OutTransitions.Add(this);
             Destination = refe.Destination;
             Value = refe.Value;
         }
@@ -171,7 +175,7 @@ namespace compiladoresPr
             statescount = 0;
             transitionsList = new List<Transition>();
             statesList = new List<State>();
-            alphabet = new List<char>();
+            alphabet = new List<char>() { '#' };
             initReference = null;
             endReference = null;
             thompsonStack = new Stack<Automata>();
@@ -182,7 +186,7 @@ namespace compiladoresPr
             statescount = 0;
             transitionsList = new List<Transition>();
             statesList = new List<State>();
-            alphabet = new List<char>();
+            alphabet = new List<char>() { '#' };
             initReference = null;
             endReference = null;
             thompsonStack = new Stack<Automata>();
@@ -190,7 +194,23 @@ namespace compiladoresPr
             {
                 AddAsThompson(character);
             }
-            //if (thompsonStack.Count > 1) throw new Exception("La expresion regular no esta bien formada");
+            if (thompsonStack.Count > 1) throw new Exception("La expresion regular no esta bien formada");
+            Automata tmp = thompsonStack.Pop();
+            this.statescount = tmp.statescount;
+            this.transitionsList = tmp.transitionsList;
+            this.statesList = tmp.statesList;
+            this.alphabet = tmp.alphabet;
+            this.initReference = tmp.initReference;
+            this.endReference = tmp.endReference;
+            this.thompsonStack = tmp.thompsonStack;
+
+            // rename states
+            int i = 0;
+            foreach (State state in statesList)
+            {
+                state.Name = "q" + i;
+                i++;
+            }
 
         }
 
@@ -232,7 +252,6 @@ namespace compiladoresPr
 
         private void AddThompsonBase(char value)
         {
-            Console.WriteLine("Agregando base: " + value);
             alphabet.Add(value);
             Automata tmp = new Automata();
             State start = new State(false);
@@ -243,8 +262,10 @@ namespace compiladoresPr
             tmp.AddState(end);
             tmp.AddTransition(transition);
             tmp.AddTransition(init);
+
+            if (!tmp.alphabet.Contains(value)) tmp.alphabet.Add(value);
+           
             thompsonStack.Push(tmp);
-            tmp.printAutomata();
         }
 
         private void AddThompsonConcatenation()
@@ -256,8 +277,11 @@ namespace compiladoresPr
             second.deleteInitTransition();
             first.AddTransitions(second.TransitionsList);
             first.AddStates(second.States);
+            foreach (char character in second.Alphabet)
+            {
+                if (!first.Alphabet.Contains(character)) first.Alphabet.Add(character);
+            }
             thompsonStack.Push(first);
-            first.printAutomata();
         }
 
         private void AddThompsonAlternativeSelection()
@@ -281,8 +305,11 @@ namespace compiladoresPr
             first.AddState(end);
             first.AddTransitions(second.TransitionsList);
             first.AddStates(second.States);
+            foreach (char character in second.Alphabet)
+            {
+                if (!first.Alphabet.Contains(character)) first.Alphabet.Add(character);
+            }
             thompsonStack.Push(first);
-            first.printAutomata();
         }
 
         private void AddThompsonKleeneLock()
@@ -303,7 +330,6 @@ namespace compiladoresPr
             tmp.AddTransition(mid1);
             tmp.AddTransition(mid2);
             tmp.AddTransition(final);
-            tmp.printAutomata();
             thompsonStack.Push(tmp);
         }
 
@@ -323,7 +349,6 @@ namespace compiladoresPr
             tmp.AddTransition(init);
             tmp.AddTransition(mid);
             tmp.AddTransition(final);
-            tmp.printAutomata();
             thompsonStack.Push(tmp);
         }
 
@@ -343,7 +368,6 @@ namespace compiladoresPr
             tmp.AddTransition(init);
             tmp.AddTransition(mid);
             tmp.AddTransition(final);
-            tmp.printAutomata();
             thompsonStack.Push(tmp);
         }
 
@@ -398,21 +422,78 @@ namespace compiladoresPr
 
         public void deleteInitTransition()
         {
+            initReference.Destination.OutTransitions.Remove(initReference);
             transitionsList.Remove(initReference);
         }
 
         public void printAutomata()
         {
+            // Count transitions where value is epsilon
+            int epsilonTransitions = 0;
+            foreach (Transition transition in transitionsList)
+            {
+                if (transition.Value == '#' && transition.Source != null)
+                {
+                    epsilonTransitions++;
+                }
+            }
             Console.WriteLine("---------------------------------------------------");
             Console.WriteLine("Automata: ");
             Console.WriteLine("Estados: " + statescount);
-            Console.WriteLine("Transiciones: " + transitionsList.Count);
+            Console.WriteLine("Transiciones: " + (transitionsList.Count - 1));
+            Console.WriteLine("Transiciones epsilon: " + epsilonTransitions);
             Console.WriteLine("---------------------------------------------------");
         }
 
-        public List<List<List<char>>> GetTransitions()
+        public List<List<List<string>>> GetTransitionsTable()
         {
-            return null;
+            List<List<List<string>>> transitions = new List<List<List<string>>>();
+            for (int i = 0; i < statesList.Count; i++)
+            {
+                List<List<string>> tmp2 = new List<List<string>>();
+                for (int j = 0; j < alphabet.Count; j++)
+                {
+                    List<string> tmp = new List<string>();
+                    foreach (Transition transition in transitionsList)
+                    {
+                        if (transition.Source == statesList[i] && transition.Value == alphabet[j])
+                        {
+                            tmp.Add(transition.Destination.Name);
+                        }
+                    }
+                    tmp2.Add(tmp);
+                }
+                transitions.Add(tmp2);
+            }
+            return transitions;
         }
+
+        public void SetTransitionsTable(DataGridView dv)
+        {
+            List<List<List<string>>> transitions = GetTransitionsTable();
+            dv.ColumnCount = alphabet.Count + 1;
+            dv.Columns[0].Name = "Estados";
+            for (int i = 0; i < alphabet.Count; i++)
+            {
+                dv.Columns[i + 1].Name = alphabet[i].ToString();
+            }
+            for (int i = 0; i < statesList.Count; i++)
+            {
+                dv.Rows.Add();
+                dv.Rows[i].Cells[0].Value = statesList[i].Name;
+                for (int j = 0; j < alphabet.Count; j++)
+                {
+                    string tmp = "";
+                    foreach (string name in transitions[i][j])
+                    {
+                        tmp += name;
+                        tmp += ", ";
+                    }
+                    dv.Rows[i].Cells[j + 1].Value = tmp;
+                }
+            }
+        }
+
+
     }
 }
