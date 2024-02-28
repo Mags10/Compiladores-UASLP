@@ -28,6 +28,9 @@ namespace compiladoresPr
             textBox1.Text = res;
             textPosfija.Text = conv.ConvertirPosFija(res);
             string tmp = textPosfija.Text;
+
+            Automata a = new Automata(tmp);
+
             labEva.Text = tmp;
             eva = new EvaPosFija(tmp);
             string resEva = eva.EvaluarPosFija();
@@ -37,18 +40,9 @@ namespace compiladoresPr
             }
             else {
                 labEva.Text = "No es correcta la conversion";
-                 textEva.Text = resEva;
-                   };
+                textEva.Text = resEva;
+            };
         }
 
-        private void textExpresion_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void textBox1_TextChanged(object sender, EventArgs e)
-        {
-
-        }
     }
 }

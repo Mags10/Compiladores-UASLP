@@ -12,37 +12,69 @@ namespace compiladoresPr
     public class State
     {
         private bool final;
+        private string name;
+        private List<Transition> outTransitions;
+
         public bool Final
         {
             get { return final; }
-
             set { final = value; }
         }
-        private string name;
         public string Name
         {
-            get{return name; }            
+            get{ return name; }            
         }
-        private List<Transition> outTransitions;
+
         public List<Transition> OutTransitions
         {
             get { return outTransitions; }
         }
-        #region Methods
-        public List<State> OutTransitionsWith(char value)
+
+        public State(State state)
         {
-            return outTransitions.FindAll(t => t.Value == value).ConvertAll(t => t.Destination);
+            name = state.Name;
+            final = state.Final;
+            outTransitions = state.OutTransitions.ToList();
         }
+
+        public State(bool final)
+        {
+            this.final = final;
+            outTransitions = new List<Transition>();
+        }
+
         public State(string name, bool final)
         {
             this.name = name;
             this.final = final;
             outTransitions = new List<Transition>();
         }
-        public List<Transition> OutStatesWith()
+
+        #region Methods
+        public List<Transition> OutTransitionsWith(char value)
         {
-            //No esta implementado
-            return outTransitions;
+            var transitions = new List<Transition>();
+            foreach (var transition in outTransitions)
+            {
+                if (transition.Value == value)
+                {
+                    transitions.Add(transition);
+                }
+            }
+            return transitions;
+        }
+
+        public List<State> OutStatesWith(char value)
+        {
+            var states = new List<State>();
+            foreach (var transition in outTransitions)
+            {
+                if (transition.Value == value)
+                {
+                    states.Add(transition.Destination);
+                }
+            }
+            return states;
         }
         
         #endregion
@@ -53,6 +85,7 @@ namespace compiladoresPr
         private State source;
         private State destination;
         private char transitionValue;
+
         public State Source 
         {
             get { return source; }
@@ -75,19 +108,23 @@ namespace compiladoresPr
             Destination = destination;
             Value = value;
         }
+
         public Transition(State destination,char value)
         {
             Source = null;
             Destination = destination;
             Value = value ;
         }
+
         public Transition(Transition refe)
         {
             Source = refe.Source;
             Destination = refe.Destination;
             Value = refe.Value;
         }
+
     }
+
     public class Automata
     {
 
@@ -128,98 +165,254 @@ namespace compiladoresPr
         {
             get { return thompsonStack; }
         }
+
+        public Automata()
+        {
+            statescount = 0;
+            transitionsList = new List<Transition>();
+            statesList = new List<State>();
+            alphabet = new List<char>();
+            initReference = null;
+            endReference = null;
+            thompsonStack = new Stack<Automata>();
+        }
         
-        public Automata(char value)
+        public Automata(string regexpos)
         {
-            statescount = 2;
+            statescount = 0;
             transitionsList = new List<Transition>();
             statesList = new List<State>();
             alphabet = new List<char>();
+            initReference = null;
+            endReference = null;
             thompsonStack = new Stack<Automata>();
-            State start = new State("q0", false);
-            State end = new State("q1", true);
-            statesList.Add(start);
-            statesList.Add(end);
-            AddTransition(start, end, value);
+            foreach (var character in regexpos)
+            {
+                AddAsThompson(character);
+            }
+            //if (thompsonStack.Count > 1) throw new Exception("La expresion regular no esta bien formada");
+
+        }
+
+        public Automata(Automata refe)
+        {
+            statescount = refe.StateCount;
+            transitionsList = refe.TransitionsList.ToList();
+            statesList = refe.States.ToList();
+            alphabet = refe.Alphabet.ToList();
+            initReference = refe.InitReference;
+            endReference = refe.EndReference;
+            thompsonStack = new Stack<Automata>(refe.ThompsonStack);
+        }
+      
+        public void AddAsThompson(char value)
+        {
+            switch (value)
+            {
+                case '*':
+                    AddThompsonKleeneLock();
+                    break;
+                case '+':
+                    AddThompsonPositiveLock();
+                    break;
+                case '?':
+                    AddThompsonZeroOrOneInt();
+                    break;
+                case '&':
+                    AddThompsonConcatenation();
+                    break;
+                case '|':
+                    AddThompsonAlternativeSelection();
+                    break;
+                default:
+                    AddThompsonBase(value);
+                    break;
+            }
+        }
+
+        private void AddThompsonBase(char value)
+        {
+            Console.WriteLine("Agregando base: " + value);
             alphabet.Add(value);
-            initReference = transitionsList[0];
-            endReference = end;
+            Automata tmp = new Automata();
+            State start = new State(false);
+            State end = new State(true);
+            Transition transition = new Transition(start, end, value);
+            Transition init = new Transition(start, '#');
+            tmp.AddState(start);
+            tmp.AddState(end);
+            tmp.AddTransition(transition);
+            tmp.AddTransition(init);
+            thompsonStack.Push(tmp);
+            tmp.printAutomata();
         }
-        public Automata(Transition refe)
-        {
-            statescount = 2;
-            transitionsList = new List<Transition>();
-            statesList = new List<State>();
-            alphabet = new List<char>();
-            thompsonStack = new Stack<Automata>();
-            State start = new State("q0", false);
-            State end = new State("q1", true);
-            statesList.Add(start);
-            statesList.Add(end);
-            AddTransition(start, end, refe.Value);
-            alphabet.Add(refe.Value);
-            initReference = transitionsList[0];
-            endReference = end;
-        }
-        public Automata(char value, bool final)
-        {
-            statescount = 2;
-            transitionsList = new List<Transition>();
-            statesList = new List<State>();
-            alphabet = new List<char>();
-            thompsonStack = new Stack<Automata>();
-            State start = new State("q0", false);
-            State end = new State("q1", final);
-            statesList.Add(start);
-            statesList.Add(end);
-            AddTransition(start, end, value);
-            alphabet.Add(value);
-            initReference = transitionsList[0];
-            endReference = end;
-        }
-        public void AddAsThompson(char a)
-        {
-           //Todavia no esta implementado
-        }
-        private char AddThompsonBase()
-        {
-            //Todavia no esta implementado
-            return ' ';
-        }
+
         private void AddThompsonConcatenation()
         {
-            //Todavia no esta implementado
+            if (thompsonStack.Count < 2) throw new Exception("No hay suficientes elementos en la pila para concatenar (expresion mal formada)");
+            Automata second = thompsonStack.Pop();
+            Automata first = thompsonStack.Pop();
+            first.replaceEndTransitions(second.InitReference.Destination);
+            second.deleteInitTransition();
+            first.AddTransitions(second.TransitionsList);
+            first.AddStates(second.States);
+            thompsonStack.Push(first);
+            first.printAutomata();
         }
+
         private void AddThompsonAlternativeSelection()
         {
-            //Todavia no esta implementado
+            if (thompsonStack.Count < 2) throw new Exception("No hay suficientes elementos en la pila para seleccionar (expresion mal formada)");
+            Automata second = thompsonStack.Pop();
+            Automata first = thompsonStack.Pop();
+            State start = new State(false);
+            State end = new State(true);
+            first.EndReference.Final = false;
+            second.EndReference.Final = false;
+            first.initReference.Source = start;
+            second.initReference.Source = start;
+            Transition init = new Transition(start, '#');
+            Transition final1 = new Transition(first.EndReference, end, '#');
+            Transition final2 = new Transition(second.EndReference, end, '#');
+            first.AddTransition(init);
+            first.AddTransition(final1);
+            first.AddTransition(final2);
+            first.AddState(start);
+            first.AddState(end);
+            first.AddTransitions(second.TransitionsList);
+            first.AddStates(second.States);
+            thompsonStack.Push(first);
+            first.printAutomata();
         }
+
         private void AddThompsonKleeneLock()
         {
-            //Todavia no esta implementado
+            if (thompsonStack.Count < 1) throw new Exception("No hay suficientes elementos en la pila para aplicar el cierre de Kleene (expresion mal formada)");
+            Automata tmp = thompsonStack.Pop();
+            State start = new State(false);
+            State end = new State(true);
+            Transition init = new Transition(start, '#');
+            Transition mid1 = new Transition(start, end, '#');
+            Transition mid2 = new Transition(tmp.EndReference, tmp.InitReference.Destination, '#');
+            Transition final = new Transition(tmp.EndReference, end, '#');
+            tmp.EndReference.Final = false;
+            tmp.initReference.Source = start;
+            tmp.AddState(start);
+            tmp.AddState(end);
+            tmp.AddTransition(init);
+            tmp.AddTransition(mid1);
+            tmp.AddTransition(mid2);
+            tmp.AddTransition(final);
+            tmp.printAutomata();
+            thompsonStack.Push(tmp);
         }
+
         private void AddThompsonPositiveLock()
         {
-            //Todavia no esta implementado
+            if (thompsonStack.Count < 1) throw new Exception("No hay suficientes elementos en la pila para aplicar el cierre positivo (expresion mal formada)");
+            Automata tmp = thompsonStack.Pop();
+            State start = new State(false);
+            State end = new State(true);
+            Transition init = new Transition(start, '#');
+            Transition mid = new Transition(tmp.EndReference, tmp.InitReference.Destination, '#');
+            Transition final = new Transition(tmp.EndReference, end, '#');
+            tmp.EndReference.Final = false;
+            tmp.initReference.Source = start;
+            tmp.AddState(start);
+            tmp.AddState(end);
+            tmp.AddTransition(init);
+            tmp.AddTransition(mid);
+            tmp.AddTransition(final);
+            tmp.printAutomata();
+            thompsonStack.Push(tmp);
         }
-        private void AddThompsonZeroOrOneIntance()
+
+        private void AddThompsonZeroOrOneInt()
         {
-            //Todavia no esta implementado
+            if (thompsonStack.Count < 1) throw new Exception("No hay suficientes elementos en la pila para aplicar el cierre de 0 o 1 (expresion mal formada)");
+            Automata tmp = thompsonStack.Pop();
+            State start = new State(false);
+            State end = new State(true);
+            Transition init = new Transition(start, '#');
+            Transition mid = new Transition(start, end, '#');
+            Transition final = new Transition(tmp.EndReference, end, '#');
+            tmp.EndReference.Final = false;
+            tmp.initReference.Source = start;
+            tmp.AddState(start);
+            tmp.AddState(end);
+            tmp.AddTransition(init);
+            tmp.AddTransition(mid);
+            tmp.AddTransition(final);
+            tmp.printAutomata();
+            thompsonStack.Push(tmp);
         }
-        /*
-        public void GetTransitions(List<List<List<char>>> a)
+
+        public void replaceEndTransitions(State state)
         {
-            
-        }*/
-        public void AddTransition(State source, State destination, char value)
+            foreach (Transition transition in transitionsList)
+            {
+                if (transition.Destination == endReference)
+                {
+                    transition.Destination = state;
+                }
+            }
+            statesList.Remove(endReference);
+            statescount--;
+            endReference = state;
+        }
+
+        public void AddState(State state)
         {
-            var transition = new Transition(source, destination, value);
-            TransitionsList.Add(transition);
-            source.OutTransitions.Add(transition);
+            if (state.Final)
+            {
+                endReference = state;
+            }
+            statesList.Add(state);
+            statescount++;
+        }
+
+        public void AddTransition(Transition transition)
+        {
+            if (transition.Source == null)
+            {
+                initReference = transition;
+            }
+            transitionsList.Add(transition);
+        }
+
+        public void AddTransitions(List<Transition> transitions)
+        {
+            foreach (Transition transition in transitions)
+            {
+                AddTransition(transition);
+            }
+        }
+
+        public void AddStates(List<State> states)
+        {
+            foreach (State state in states)
+            {
+                AddState(state);
+            }
+        }
+
+        public void deleteInitTransition()
+        {
+            transitionsList.Remove(initReference);
+        }
+
+        public void printAutomata()
+        {
+            Console.WriteLine("---------------------------------------------------");
+            Console.WriteLine("Automata: ");
+            Console.WriteLine("Estados: " + statescount);
+            Console.WriteLine("Transiciones: " + transitionsList.Count);
+            Console.WriteLine("---------------------------------------------------");
+        }
+
+        public List<List<List<char>>> GetTransitions()
+        {
+            return null;
         }
     }
-
-
 }
-
-
