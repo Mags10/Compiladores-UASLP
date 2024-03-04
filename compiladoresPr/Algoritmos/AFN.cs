@@ -262,7 +262,6 @@ namespace compiladoresPr
             tmp.AddState(end);
             tmp.AddTransition(transition);
             tmp.AddTransition(init);
-
             if (!tmp.alphabet.Contains(value)) tmp.alphabet.Add(value);
            
             thompsonStack.Push(tmp);
