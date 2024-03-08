@@ -1,4 +1,5 @@
-﻿using System;
+﻿using compiladoresPr.Formularios;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -15,6 +16,7 @@ namespace compiladoresPr
 
         ConvPosFija conv;
         EvaPosFija eva;
+        TransitionTable tt = null;
 
         public Form1()
         { 
@@ -28,6 +30,7 @@ namespace compiladoresPr
             textBox1.Text = res;
             textPosfija.Text = conv.ConvertirPosFija(res);
             string tmp = textPosfija.Text;
+
             labEva.Text = tmp;
             eva = new EvaPosFija(tmp);
             string resEva = eva.EvaluarPosFija();
@@ -37,16 +40,36 @@ namespace compiladoresPr
             }
             else {
                 labEva.Text = "No es correcta la conversion";
-                 textEva.Text = resEva;
-                   };
+                textEva.Text = resEva;
+            };
         }
 
-        private void textExpresion_TextChanged(object sender, EventArgs e)
+        private void button2_Click(object sender, EventArgs e)
         {
-
+            if (this.tt == null)
+            {
+                if (textPosfija.Text == "") return;
+                tt = new TransitionTable(textPosfija.Text);
+                tt.Show();
+            }
+            else
+            {
+                tt.update(textPosfija.Text);
+            }
+            
+            
         }
 
-        private void textBox1_TextChanged(object sender, EventArgs e)
+        private void textPosfija_TextChanged(object sender, EventArgs e)
+        {
+            if (this.tt != null)
+            {
+                tt.update(textPosfija.Text);
+                tt.Focus();
+            }
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
         {
 
         }

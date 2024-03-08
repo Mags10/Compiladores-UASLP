@@ -314,11 +314,13 @@ namespace compiladoresPr
             foreach (char c in infija)
             {
                 tempo.Clear();
-                Console.WriteLine("dentro de eva"+c);
+                //Console.WriteLine("dentro de eva"+c);
                 if(!preceBin.ContainsKey(c) && !preceUna.ContainsKey(c))
                 {
                     pila.Push(c.ToString());
-                    Console.WriteLine(pila.Peek());
+                    
+                    
+                    //Console.WriteLine(pila.Peek());
                 }
                 else
                 {
