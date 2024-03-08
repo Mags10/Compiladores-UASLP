@@ -20,6 +20,7 @@ namespace compiladoresPr.Formularios
             textBox1.Text = a.StateCount.ToString();
             textBox2.Text = a.getTransitionsCount().ToString();
             textBox3.Text = a.getEpsilonTransitionsCount().ToString();
+          
         }
 
         public void update (string posregex)
@@ -30,7 +31,12 @@ namespace compiladoresPr.Formularios
             textBox1.Text = a.StateCount.ToString();
             textBox2.Text = a.getTransitionsCount().ToString();
             textBox3.Text = a.getEpsilonTransitionsCount().ToString();
+           
         }
 
+        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
     }
 }

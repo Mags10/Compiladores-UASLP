@@ -509,6 +509,54 @@ namespace compiladoresPr
                 }
             }
         }
+        //Lista de transiciones conectadas al final y los que relacionan con el todos conetados por epsilon
+        //Se manda llamar depues mostrar la tabla de transiciones
+        public void EpsilonTransitions()
+        {
+            List<State> states = new List<State>();
+            foreach (Transition transition in transitionsList)
+            {
+                if (transition.Value == '#' && transition.Source != null)
+                {
+                    states.Add(transition.Source);
+                }
+            }
+            foreach (State state in states)
+            {
+                List<State> closure = EpsilonClosure(state);
+                foreach (State state2 in closure)
+                {
+                    foreach (Transition transition in state2.OutTransitions)
+                    {
+                        if (transition.Value != '#')
+                        {
+                            foreach (State state3 in closure)
+                            {
+                                if (state3 != state2)
+                                {
+                                    Transition newTransition = new Transition(state2, transition.Destination, transition.Value);
+                                    transitionsList.Add(newTransition);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        //Mando llamar el metodo EpsilonClosure en el metodo EpsilonTransitions
+        public List<State> EpsilonClosure(State state)
+        {
+            List<State> closure = new List<State>();
+            closure.Add(state);
+            foreach (Transition transition in state.OutTransitionsWith('#'))
+            {
+                closure.AddRange(EpsilonClosure(transition.Destination));
+                Console.WriteLine("EpsilonClosure: " + transition.Destination.Name);
+            }
+            return closure;
+        }
+
+
 
 
     }

@@ -56,6 +56,8 @@ namespace compiladoresPr
             {
                 tt.update(textPosfija.Text);
             }
+            
+            
         }
 
         private void textPosfija_TextChanged(object sender, EventArgs e)
@@ -65,6 +67,11 @@ namespace compiladoresPr
                 tt.update(textPosfija.Text);
                 tt.Focus();
             }
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }
