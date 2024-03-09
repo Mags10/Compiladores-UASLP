@@ -509,45 +509,23 @@ namespace compiladoresPr
                 }
             }
         }
-        //Lista de transiciones conectadas al final y los que relacionan con el todos conetados por epsilon
-        //Se manda llamar depues mostrar la tabla de transiciones
-        public void EpsilonTransitions()
+        
+        // Metodo para obtener las transiciones epsilon
+        public List<List<State>> EpsilonTransitions()
         {
-            List<State> states = new List<State>();
-            foreach (Transition transition in transitionsList)
+            List<List<State>> epsilonTransitions = new List<List<State>>();
+            foreach (State state in statesList)
             {
-                if (transition.Value == '#' && transition.Source != null)
-                {
-                    states.Add(transition.Source);
-                }
+                List<State> tmp = EpsilonClosure(state);
+                epsilonTransitions.Add(tmp);
             }
-            foreach (State state in states)
-            {
-                List<State> closure = EpsilonClosure(state);
-                foreach (State state2 in closure)
-                {
-                    foreach (Transition transition in state2.OutTransitions)
-                    {
-                        if (transition.Value != '#')
-                        {
-                            foreach (State state3 in closure)
-                            {
-                                if (state3 != state2)
-                                {
-                                    Transition newTransition = new Transition(state2, transition.Destination, transition.Value);
-                                    transitionsList.Add(newTransition);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+            return epsilonTransitions;
         }
+
         //Mando llamar el metodo EpsilonClosure en el metodo EpsilonTransitions
         public List<State> EpsilonClosure(State state)
         {
-            List<State> closure = new List<State>();
-            closure.Add(state);
+            List<State> closure = new List<State> { state };
             foreach (Transition transition in state.OutTransitionsWith('#'))
             {
                 closure.AddRange(EpsilonClosure(transition.Destination));
@@ -555,9 +533,5 @@ namespace compiladoresPr
             }
             return closure;
         }
-
-
-
-
     }
 }
