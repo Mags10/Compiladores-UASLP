@@ -26,9 +26,28 @@ namespace compiladoresPr
 
         private void button1_Click_1(object sender, EventArgs e)
         {
-            string res = conv.NormaliceExpresion(textExpresion.Text);
-            textBox1.Text = res;
-            textPosfija.Text = conv.ConvertirPosFija(res);
+
+            textExpresion.Focus();
+            if (textExpresion.Text == "")
+            {
+                textPosfija.Text = "";
+                textEva.Text = "";
+                labEva.Text = "";
+                textBox1.Text = "";
+                return;
+            }
+            string res = "";
+            try
+            {
+                res = conv.NormaliceExpresion(textExpresion.Text);
+                textBox1.Text = res;
+                textPosfija.Text = conv.ConvertirPosFija(res);
+            }catch (Exception ex)
+            {
+                textExpresion.Focus();
+                textPosfija.Text = ex.Message;
+                return;
+            }
             string tmp = textPosfija.Text;
 
             labEva.Text = tmp;
@@ -42,13 +61,14 @@ namespace compiladoresPr
                 labEva.Text = "No es correcta la conversion";
                 textEva.Text = resEva;
             };
+
+            textExpresion.Focus();
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
             if (this.tt == null)
             {
-                if (textPosfija.Text == "") return;
                 tt = new TransitionTable(textPosfija.Text);
                 tt.Show();
             }
@@ -56,8 +76,6 @@ namespace compiladoresPr
             {
                 tt.update(textPosfija.Text);
             }
-            
-            
         }
 
         private void textPosfija_TextChanged(object sender, EventArgs e)
@@ -65,13 +83,13 @@ namespace compiladoresPr
             if (this.tt != null)
             {
                 tt.update(textPosfija.Text);
-                tt.Focus();
+
             }
         }
-
-        private void Form1_Load(object sender, EventArgs e)
+        
+        private void textExpresion_TextChanged(object sender, EventArgs e)
         {
-
+            button1_Click_1(sender, e);
         }
     }
 }
