@@ -5,9 +5,11 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Input;
 
 namespace compiladoresPr
 {
@@ -17,6 +19,12 @@ namespace compiladoresPr
         ConvPosFija conv;
         EvaPosFija eva;
         TransitionTable tt = null;
+        public bool autoSet = false;
+
+        public void setAutoSet(bool value)
+        {
+            this.autoSet = value;
+        }
 
         public Form1()
         { 
@@ -83,7 +91,6 @@ namespace compiladoresPr
             if (this.tt != null)
             {
                 tt.update(textPosfija.Text);
-
             }
         }
         
@@ -91,5 +98,6 @@ namespace compiladoresPr
         {
             button1_Click_1(sender, e);
         }
+
     }
 }

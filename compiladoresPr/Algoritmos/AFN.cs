@@ -562,12 +562,23 @@ namespace compiladoresPr
         {
             List<State> closure = new List<State> { state };
             List<Transition> tmp = state.OutTransitionsWith('#');
-            //if (tmp.Count == 0) return closure;
-            foreach (Transition transition in tmp)
-            {
-                closure.AddRange(EpsilonClosure(transition.Destination));
-            }
+            if (tmp.Count == 0) return closure;
+            aux(state);
             return closure;
+
+            void aux (State tmpState)
+            {
+                List<Transition> tmpTrsLst = tmpState.OutTransitionsWith('#');
+                if (tmpTrsLst.Count == 0) return;
+                foreach (Transition transition in tmpTrsLst)
+                {
+                    if (!closure.Contains(transition.Destination))
+                    {
+                        closure.Add(transition.Destination);
+                        aux(transition.Destination);
+                    }
+                }
+            }
         }
 
         public Automata createAFD()
@@ -602,7 +613,14 @@ namespace compiladoresPr
                     List<State> tmpEpsilonClosure = new List<State>();
                     foreach (State state in tmp)
                     {
-                        tmpEpsilonClosure.AddRange(EpsilonClosure(state));
+                        List<State> tmpAuxEpsilonClosure = EpsilonClosure(state);
+                        foreach (State state2 in tmpAuxEpsilonClosure)
+                        {
+                            if (!tmpEpsilonClosure.Contains(state2))
+                            {
+                                tmpEpsilonClosure.Add(state2);
+                            }
+                        }
                     }
                     if (tmpEpsilonClosure.Count == 0) continue;
                     State destination = addStateAFD(tmpEpsilonClosure, states, realStates, automata);
@@ -644,7 +662,6 @@ namespace compiladoresPr
 
         private bool isListEqual(List<State> list1, List<State> list2)
         {
-            // Compare the elements of both lists, not necessarily in the same order
             return list1.Count == list2.Count && list1.All(list2.Contains);
         }
 

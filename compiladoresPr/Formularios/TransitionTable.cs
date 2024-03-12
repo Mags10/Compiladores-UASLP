@@ -96,6 +96,9 @@ namespace compiladoresPr.Formularios
 
             dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
             dataGridView2.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
+
+            // copy text of textbox8 to clipboard
+            Clipboard.SetText(textBox8.Text);
         }
     }
 }
