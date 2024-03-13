@@ -511,7 +511,7 @@ namespace compiladoresPr
             return transitions;
         }
 
-        public void SetTransitionsTable(DataGridView dv)
+        public void SetTransitionsTable(DataGridView dv, bool conj)
         {
             List<List<List<string>>> transitions = GetTransitionsTable();
             dv.ColumnCount = alphabet.Count + 1;
@@ -539,7 +539,7 @@ namespace compiladoresPr
                         tmp += ", ";
                     }
                     tmp = tmp.Remove(tmp.Length - 2);
-                    tmp = "{" + tmp + "}";
+                    if (conj) tmp = "{" + tmp + "}";  
                     dv.Rows[i].Cells[j + 1].Value = tmp;
                 }
             }
@@ -645,7 +645,7 @@ namespace compiladoresPr
                 }
             }
             origin = new State(false);
-            origin.Name = "q" + automata.StateCount;
+            origin.Name = intToChar(automata.StateCount);
             foreach (State s in stateList)
             {
                 if (s.Final)
@@ -663,6 +663,17 @@ namespace compiladoresPr
         private bool isListEqual(List<State> list1, List<State> list2)
         {
             return list1.Count == list2.Count && list1.All(list2.Contains);
+        }
+
+        // Convert int to ASCII from A to Z, if the number is greater than 25, 25 will be a A, etc
+        
+        private string intToChar(int number)
+        {
+            if (number > 25)
+            {
+                return ((char)(number % 25 + 64)).ToString();
+            }
+            return ((char)(number + 65)).ToString();
         }
 
     }

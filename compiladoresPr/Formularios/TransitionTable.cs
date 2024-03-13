@@ -56,7 +56,7 @@ namespace compiladoresPr.Formularios
             this.dataGridView1.Rows.Clear();
             this.dataGridView2.Rows.Clear();
             Automata a = new Automata(posregex);
-            a.SetTransitionsTable(this.dataGridView1);
+            a.SetTransitionsTable(this.dataGridView1, true);
             textBox1.Text = a.StateCount.ToString();
             textBox2.Text = a.getTransitionsCount().ToString();
             textBox3.Text = a.getEpsilonTransitionsCount().ToString();
@@ -75,7 +75,7 @@ namespace compiladoresPr.Formularios
             textBox6.Text = textBox6.Text.Substring(0, textBox6.Text.Length - 2);
             textBox13.Text = a.FinalStates.Count.ToString();
             a = a.createAFD();
-            a.SetTransitionsTable(this.dataGridView2);
+            a.SetTransitionsTable(this.dataGridView2, false);
             textBox8.Text = a.StateCount.ToString();
             textBox11.Text = a.getTransitionsCount().ToString();
             textBox12.Text = a.getEpsilonTransitionsCount().ToString();
