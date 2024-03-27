@@ -115,6 +115,7 @@ namespace compiladoresPr
         public Transition(State destination,char value)
         {
             Source = null;
+            //destination.OutTransitions.Add(this);
             Destination = destination;
             Value = value ;
         }
@@ -139,6 +140,7 @@ namespace compiladoresPr
         private Transition initReference;
         private State endReference;
         private Stack<Automata> thompsonStack;
+        private List<State> finalStates;
 
         public int StateCount
         {
@@ -169,6 +171,10 @@ namespace compiladoresPr
         {
             get { return thompsonStack; }
         }
+        public List<State> FinalStates
+        {
+            get { return finalStates; }
+        }
 
         public Automata()
         {
@@ -179,6 +185,7 @@ namespace compiladoresPr
             initReference = null;
             endReference = null;
             thompsonStack = new Stack<Automata>();
+            finalStates = new List<State>();
         }
         
         public Automata(string regexpos)
@@ -190,6 +197,7 @@ namespace compiladoresPr
             initReference = null;
             endReference = null;
             thompsonStack = new Stack<Automata>();
+            finalStates = new List<State>();
             foreach (var character in regexpos)
             {
                 AddAsThompson(character);
@@ -203,7 +211,7 @@ namespace compiladoresPr
             this.initReference = tmp.initReference;
             this.endReference = tmp.endReference;
             this.thompsonStack = tmp.thompsonStack;
-
+            this.finalStates.Add(this.endReference);
             // rename states
             int i = 0;
             foreach (State state in statesList)
@@ -223,6 +231,7 @@ namespace compiladoresPr
             initReference = refe.InitReference;
             endReference = refe.EndReference;
             thompsonStack = new Stack<Automata>(refe.ThompsonStack);
+            finalStates = refe.finalStates.ToList();
         }
       
         public void AddAsThompson(char value)
@@ -263,7 +272,6 @@ namespace compiladoresPr
             tmp.AddTransition(transition);
             tmp.AddTransition(init);
             if (!tmp.alphabet.Contains(value)) tmp.alphabet.Add(value);
-           
             thompsonStack.Push(tmp);
         }
 
@@ -294,6 +302,8 @@ namespace compiladoresPr
             second.EndReference.Final = false;
             first.initReference.Source = start;
             second.initReference.Source = start;
+            start.OutTransitions.Add(first.initReference);
+            start.OutTransitions.Add(second.initReference);
             Transition init = new Transition(start, '#');
             Transition final1 = new Transition(first.EndReference, end, '#');
             Transition final2 = new Transition(second.EndReference, end, '#');
@@ -323,6 +333,7 @@ namespace compiladoresPr
             Transition final = new Transition(tmp.EndReference, end, '#');
             tmp.EndReference.Final = false;
             tmp.initReference.Source = start;
+            start.OutTransitions.Add(tmp.InitReference);
             tmp.AddState(start);
             tmp.AddState(end);
             tmp.AddTransition(init);
@@ -343,6 +354,7 @@ namespace compiladoresPr
             Transition final = new Transition(tmp.EndReference, end, '#');
             tmp.EndReference.Final = false;
             tmp.initReference.Source = start;
+            start.OutTransitions.Add(tmp.InitReference);
             tmp.AddState(start);
             tmp.AddState(end);
             tmp.AddTransition(init);
@@ -362,6 +374,7 @@ namespace compiladoresPr
             Transition final = new Transition(tmp.EndReference, end, '#');
             tmp.EndReference.Final = false;
             tmp.initReference.Source = start;
+            start.OutTransitions.Add(tmp.InitReference);
             tmp.AddState(start);
             tmp.AddState(end);
             tmp.AddTransition(init);
@@ -389,6 +402,7 @@ namespace compiladoresPr
             if (state.Final)
             {
                 endReference = state;
+                finalStates.Add(state);
             }
             statesList.Add(state);
             statescount++;
@@ -429,9 +443,30 @@ namespace compiladoresPr
         {
             Console.WriteLine("---------------------------------------------------");
             Console.WriteLine("Automata: ");
-            Console.WriteLine("Estados: " + statescount);
-            Console.WriteLine("Transiciones: " + getTransitionsCount());
-            Console.WriteLine("Transiciones epsilon: " + getEpsilonTransitionsCount());
+            Console.WriteLine("Simbolos: " + alphabet.Count);
+            foreach (char character in alphabet)
+            {
+                Console.WriteLine("Simbolo: " + character);
+            }
+            Console.WriteLine("\nEstados: " + statescount);
+            foreach (State state in statesList)
+            {
+                Console.WriteLine("Estado: " + state.Name + " Final: " + state.Final);
+            }
+            Console.WriteLine("\nTransiciones: " + getTransitionsCount());
+            foreach (Transition transition in transitionsList)
+            {
+                if (transition.Source != null) Console.WriteLine("Transicion: " + transition.Source.Name + " - (" + transition.Value + ") > " + transition.Destination.Name);
+                else Console.WriteLine("Transicion de inicio: " + " - (" + transition.Value + ") > " + transition.Destination.Name);
+            }
+            Console.WriteLine("\nTransiciones epsilon: " + getEpsilonTransitionsCount());
+            foreach (Transition transition in transitionsList)
+            {
+                if (transition.Value == '#' && transition.Source != null)
+                {
+                    Console.WriteLine("Transicion epsilon: " + transition.Source.Name + " - (" + transition.Value + ") > " + transition.Destination.Name);
+                }
+            }
             Console.WriteLine("---------------------------------------------------");
         }
 
@@ -476,7 +511,7 @@ namespace compiladoresPr
             return transitions;
         }
 
-        public void SetTransitionsTable(DataGridView dv)
+        public void SetTransitionsTable(DataGridView dv, bool conj)
         {
             List<List<List<string>>> transitions = GetTransitionsTable();
             dv.ColumnCount = alphabet.Count + 1;
@@ -504,60 +539,142 @@ namespace compiladoresPr
                         tmp += ", ";
                     }
                     tmp = tmp.Remove(tmp.Length - 2);
-                    tmp = "{" + tmp + "}";
+                    if (conj) tmp = "{" + tmp + "}";  
                     dv.Rows[i].Cells[j + 1].Value = tmp;
                 }
             }
         }
-        //Lista de transiciones conectadas al final y los que relacionan con el todos conetados por epsilon
-        //Se manda llamar depues mostrar la tabla de transiciones
-        public void EpsilonTransitions()
+        
+        // Metodo para obtener las transiciones epsilon
+        private List<List<State>> EpsilonTransitions()
         {
-            List<State> states = new List<State>();
-            foreach (Transition transition in transitionsList)
+            List<List<State>> epsilonTransitions = new List<List<State>>();
+            foreach (State state in statesList)
             {
-                if (transition.Value == '#' && transition.Source != null)
-                {
-                    states.Add(transition.Source);
-                }
+                List<State> tmp = EpsilonClosure(state);
+                epsilonTransitions.Add(tmp);
             }
-            foreach (State state in states)
+            return epsilonTransitions;
+        }
+
+        //Mando llamar el metodo EpsilonClosure en el metodo EpsilonTransitions
+        private List<State> EpsilonClosure(State state)
+        {
+            List<State> closure = new List<State> { state };
+            List<Transition> tmp = state.OutTransitionsWith('#');
+            if (tmp.Count == 0) return closure;
+            aux(state);
+            return closure;
+
+            void aux (State tmpState)
             {
-                List<State> closure = EpsilonClosure(state);
-                foreach (State state2 in closure)
+                List<Transition> tmpTrsLst = tmpState.OutTransitionsWith('#');
+                if (tmpTrsLst.Count == 0) return;
+                foreach (Transition transition in tmpTrsLst)
                 {
-                    foreach (Transition transition in state2.OutTransitions)
+                    if (!closure.Contains(transition.Destination))
                     {
-                        if (transition.Value != '#')
-                        {
-                            foreach (State state3 in closure)
-                            {
-                                if (state3 != state2)
-                                {
-                                    Transition newTransition = new Transition(state2, transition.Destination, transition.Value);
-                                    transitionsList.Add(newTransition);
-                                }
-                            }
-                        }
+                        closure.Add(transition.Destination);
+                        aux(transition.Destination);
                     }
                 }
             }
         }
-        //Mando llamar el metodo EpsilonClosure en el metodo EpsilonTransitions
-        public List<State> EpsilonClosure(State state)
+
+        public Automata createAFD()
         {
-            List<State> closure = new List<State>();
-            closure.Add(state);
-            foreach (Transition transition in state.OutTransitionsWith('#'))
+            Automata automata = new Automata();
+
+            // Alfabeto del AFD (sin epsilon)
+            List<char> alphabetFinal = new List<char>(this.alphabet);
+            alphabetFinal.Remove('#');
+
+            // Lista de estados del AFD
+            List<List<State>> states = new List<List<State>>();
+            List<State> realStates = new List<State>();
+
+            List<State> initial = EpsilonClosure(this.initReference.Destination);
+            State origin = addStateAFD(initial, states, realStates, automata);
+
+            Transition init = new Transition(origin, '#');
+            automata.AddTransition(init);
+
+            for (int i = 0; i < states.Count; i++)
             {
-                closure.AddRange(EpsilonClosure(transition.Destination));
-                Console.WriteLine("EpsilonClosure: " + transition.Destination.Name);
+                initial = states[i];
+                origin = realStates[i];
+                foreach (Char c in alphabetFinal)
+                {
+                    List<State> tmp = new List<State>();
+                    foreach (State state in initial)
+                    {
+                        tmp.AddRange(state.OutStatesWith(c));
+                    }
+                    List<State> tmpEpsilonClosure = new List<State>();
+                    foreach (State state in tmp)
+                    {
+                        List<State> tmpAuxEpsilonClosure = EpsilonClosure(state);
+                        foreach (State state2 in tmpAuxEpsilonClosure)
+                        {
+                            if (!tmpEpsilonClosure.Contains(state2))
+                            {
+                                tmpEpsilonClosure.Add(state2);
+                            }
+                        }
+                    }
+                    if (tmpEpsilonClosure.Count == 0) continue;
+                    State destination = addStateAFD(tmpEpsilonClosure, states, realStates, automata);
+                    Transition transition = new Transition(origin, destination, c);
+                    if (!automata.alphabet.Contains(c)) automata.alphabet.Add(c);
+                    automata.AddTransition(transition);
+                }
             }
-            return closure;
+            automata.alphabet.Remove('#');
+            return automata;
         }
 
+        private State addStateAFD(List<State> stateList, List<List<State>> states, List<State> realStates, Automata automata)
+        {
+            State origin = null;
+            for (int i = 0; i < states.Count; i++)
+            {
+                if (isListEqual(states[i], stateList))
+                {
+                    origin = realStates[i];
+                    return origin;
+                }
+            }
+            origin = new State(false);
+            origin.Name = intToChar(automata.StateCount);
+            foreach (State s in stateList)
+            {
+                if (s.Final)
+                {
+                    origin.Final = true;
+                    break;
+                }
+            }
+            realStates.Add(origin);
+            states.Add(stateList);
+            automata.AddState(origin);
+            return origin;
+        }
 
+        private bool isListEqual(List<State> list1, List<State> list2)
+        {
+            return list1.Count == list2.Count && list1.All(list2.Contains);
+        }
 
+        // Convert int to ASCII from A to Z, if the number is greater than 25, 25 will be a A, etc
+        
+        private string intToChar(int number)
+        {
+            if (number > 25)
+            {
+                return ((char)(number % 25 + 64)).ToString();
+            }
+            return ((char)(number + 65)).ToString();
+        }
 
     }
 }
