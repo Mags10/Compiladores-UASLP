@@ -141,6 +141,7 @@ namespace compiladoresPr
         private State endReference;
         private Stack<Automata> thompsonStack;
         private List<State> finalStates;
+        private bool isDeterministic = false;
 
         public int StateCount
         {
@@ -174,6 +175,12 @@ namespace compiladoresPr
         public List<State> FinalStates
         {
             get { return finalStates; }
+        }
+
+        public bool Deterministic
+        {
+            get { return isDeterministic; }
+            set { isDeterministic = value; }
         }
 
         public Automata()
@@ -544,18 +551,6 @@ namespace compiladoresPr
                 }
             }
         }
-        
-        // Metodo para obtener las transiciones epsilon
-        private List<List<State>> EpsilonTransitions()
-        {
-            List<List<State>> epsilonTransitions = new List<List<State>>();
-            foreach (State state in statesList)
-            {
-                List<State> tmp = EpsilonClosure(state);
-                epsilonTransitions.Add(tmp);
-            }
-            return epsilonTransitions;
-        }
 
         //Mando llamar el metodo EpsilonClosure en el metodo EpsilonTransitions
         private List<State> EpsilonClosure(State state)
@@ -630,6 +625,7 @@ namespace compiladoresPr
                 }
             }
             automata.alphabet.Remove('#');
+            automata.Deterministic = true;
             return automata;
         }
 
@@ -666,7 +662,6 @@ namespace compiladoresPr
         }
 
         // Convert int to ASCII from A to Z, if the number is greater than 25, 25 will be a A, etc
-        
         private string intToChar(int number)
         {
             if (number > 25)
@@ -676,5 +671,18 @@ namespace compiladoresPr
             return ((char)(number + 65)).ToString();
         }
 
+        public bool isAccepted(string word)
+        {
+            if (!isDeterministic) throw new Exception("El automata no es determinista");
+            State state = this.initReference.Destination;
+            foreach (char c in word)
+            {
+                List<Transition> tmp = state.OutTransitionsWith(c);
+                if (tmp.Count > 1) throw new Exception("El automata no es determinista");
+                if (tmp.Count == 0) return false;
+                state = tmp[0].Destination;
+            }
+            return state.Final;
+        }
     }
 }
