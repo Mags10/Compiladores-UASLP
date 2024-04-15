@@ -39,6 +39,13 @@ namespace compiladoresPr
 
         #region Métodos
 
+        public string fixExpression(string expression)
+        {
+            expression = this.NormaliceExpresion(expression);
+            expression = this.ConvertirPosFija(expression);
+            return expression;
+        }
+
         public string ConvertirPosFija(string expression)
         {
             pila.Clear();
@@ -288,7 +295,7 @@ namespace compiladoresPr
             foreach (char c in posfija.Reverse())
             {
                 infija.Push(c);
-                Console.WriteLine(c);
+                //Console.WriteLine(c);
             }
             preceUna = new Dictionary<char, int>
             {
@@ -339,8 +346,8 @@ namespace compiladoresPr
             if (pila.Count != 0) {
 
                 return tmp2;
-            }   
-                
+            }
+
             return "No se pudo evaluar la expresion "+" "+tmp2;
         }
         #endregion

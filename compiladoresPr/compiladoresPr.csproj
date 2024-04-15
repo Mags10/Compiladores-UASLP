@@ -47,8 +47,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Algoritmos\AFN.cs" />
+    <Compile Include="Algoritmos\Automatas.cs" />
     <Compile Include="Algoritmos\ConvPosFija.cs" />
+    <Compile Include="Algoritmos\TinyProcessor.cs" />
     <Compile Include="Formularios\Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -56,6 +57,12 @@
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="Formularios\Program.cs" />
+    <Compile Include="Formularios\Tiny.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Formularios\Tiny.Designer.cs">
+      <DependentUpon>Tiny.cs</DependentUpon>
+    </Compile>
     <Compile Include="Formularios\TransitionTable.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -65,6 +72,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Formularios\Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Formularios\Tiny.resx">
+      <DependentUpon>Tiny.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Formularios\TransitionTable.resx">
       <DependentUpon>TransitionTable.cs</DependentUpon>

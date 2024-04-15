@@ -19,6 +19,7 @@ namespace compiladoresPr
         ConvPosFija conv;
         EvaPosFija eva;
         TransitionTable tt = null;
+        Tiny Tiny = null;
         public bool autoSet = false;
 
         public void setAutoSet(bool value)
@@ -62,11 +63,11 @@ namespace compiladoresPr
             eva = new EvaPosFija(tmp);
             string resEva = eva.EvaluarPosFija();
             if (res == resEva) {
-                labEva.Text = "Es correcta la conversion";
+                labEva.Text = "True";
                 textEva.Text = resEva;
             }
             else {
-                labEva.Text = "No es correcta la conversion";
+                labEva.Text = "False";
                 textEva.Text = resEva;
             };
 
@@ -77,7 +78,7 @@ namespace compiladoresPr
         {
             if (this.tt == null)
             {
-                tt = new TransitionTable(textPosfija.Text);
+                tt = new TransitionTable(textPosfija.Text, this);
                 tt.Show();
             }
             else
@@ -99,5 +100,23 @@ namespace compiladoresPr
             button1_Click_1(sender, e);
         }
 
+        public void closedTT()
+        {
+            this.tt = null;
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            if (this.Tiny == null)
+            {
+                Tiny = new Tiny(this);
+                Tiny.Show();
+            }
+        }
+
+        public void closedTiny()
+        {
+            this.Tiny = null;
+        }
     }
 }

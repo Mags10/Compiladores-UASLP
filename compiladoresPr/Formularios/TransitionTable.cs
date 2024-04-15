@@ -13,12 +13,14 @@ namespace compiladoresPr.Formularios
     public partial class TransitionTable : Form
     {
         Automata a;
+        Form1 f;
 
-        public TransitionTable(string posregex)
+        public TransitionTable(string posregex, Form1 f)
         {
             // Change the title of the form
             this.InitializeComponent();
             this.update(posregex);
+            this.f = f;
         }
 
         public void update (string posregex)
@@ -121,6 +123,11 @@ namespace compiladoresPr.Formularios
                 label14.Text = "ER no permite lexema";
                 label14.ForeColor = Color.Red;
             }
+        }
+
+        private void TransitionTable_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            f.closedTT();
         }
     }
 }
