@@ -12,6 +12,8 @@ namespace compiladoresPr.Formularios
 {
     public partial class TransitionTable : Form
     {
+        Automata a;
+
         public TransitionTable(string posregex)
         {
             // Change the title of the form
@@ -47,6 +49,9 @@ namespace compiladoresPr.Formularios
                 textBox9.Text = "";
                 textBox7.Text = "";
                 textBox14.Text = "";
+                label14.Text = "-";
+                label14.ForeColor = Color.Black;
+                textBox15.BackColor = Color.White;
             }
         }
 
@@ -55,7 +60,7 @@ namespace compiladoresPr.Formularios
             this.Text = "Automata de '" + posregex + "'";
             this.dataGridView1.Rows.Clear();
             this.dataGridView2.Rows.Clear();
-            Automata a = new Automata(posregex);
+            a = new Automata(posregex);
             a.SetTransitionsTable(this.dataGridView1, true);
             textBox1.Text = a.StateCount.ToString();
             textBox2.Text = a.getTransitionsCount().ToString();
@@ -99,6 +104,23 @@ namespace compiladoresPr.Formularios
 
             // copy text of textbox8 to clipboard
             Clipboard.SetText(textBox8.Text);
+            textBox15_TextChanged(null, null);
+        }
+
+        private void textBox15_TextChanged(object sender, EventArgs e)
+        {
+            label15.Visible = (textBox15.Text.Length == 0);
+            if (a == null) return;
+            if (a.isAccepted(textBox15.Text))
+            {
+                label14.Text = "ER permite lexema";
+                label14.ForeColor = Color.Green;
+            }
+            else
+            {
+                label14.Text = "ER no permite lexema";
+                label14.ForeColor = Color.Red;
+            }
         }
     }
 }
