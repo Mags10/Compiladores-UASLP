@@ -629,6 +629,21 @@ namespace compiladoresPr
             return automata;
         }
 
+        public void transformToDeterministic()
+        {
+            if (isDeterministic) return;
+            Automata automata = createAFD();
+            this.statescount = automata.StateCount;
+            this.transitionsList = automata.TransitionsList;
+            this.statesList = automata.States;
+            this.alphabet = automata.Alphabet;
+            this.initReference = automata.InitReference;
+            this.endReference = automata.EndReference;
+            this.thompsonStack = automata.ThompsonStack;
+            this.finalStates = automata.FinalStates;
+            this.isDeterministic = true;
+        }
+
         private State addStateAFD(List<State> stateList, List<List<State>> states, List<State> realStates, Automata automata)
         {
             State origin = null;

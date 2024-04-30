@@ -43,6 +43,7 @@
             this.label8 = new System.Windows.Forms.Label();
             this.labEva = new System.Windows.Forms.Label();
             this.button2 = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -98,7 +99,7 @@
             // textExpresion
             // 
             this.textExpresion.Location = new System.Drawing.Point(14, 122);
-            this.textExpresion.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textExpresion.Margin = new System.Windows.Forms.Padding(2);
             this.textExpresion.Name = "textExpresion";
             this.textExpresion.Size = new System.Drawing.Size(175, 20);
             this.textExpresion.TabIndex = 1;
@@ -107,7 +108,7 @@
             // textPosfija
             // 
             this.textPosfija.Location = new System.Drawing.Point(12, 198);
-            this.textPosfija.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textPosfija.Margin = new System.Windows.Forms.Padding(2);
             this.textPosfija.Name = "textPosfija";
             this.textPosfija.Size = new System.Drawing.Size(177, 20);
             this.textPosfija.TabIndex = 2;
@@ -159,15 +160,15 @@
             // textBox1
             // 
             this.textBox1.Location = new System.Drawing.Point(12, 161);
-            this.textBox1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textBox1.Margin = new System.Windows.Forms.Padding(2);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(177, 20);
             this.textBox1.TabIndex = 7;
             // 
             // textEva
             // 
-            this.textEva.Location = new System.Drawing.Point(214, 143);
-            this.textEva.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textEva.Location = new System.Drawing.Point(214, 122);
+            this.textEva.Margin = new System.Windows.Forms.Padding(2);
             this.textEva.Name = "textEva";
             this.textEva.Size = new System.Drawing.Size(175, 20);
             this.textEva.TabIndex = 9;
@@ -187,7 +188,7 @@
             // 
             this.labEva.AutoSize = true;
             this.labEva.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labEva.Location = new System.Drawing.Point(211, 123);
+            this.labEva.Location = new System.Drawing.Point(334, 103);
             this.labEva.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.labEva.Name = "labEva";
             this.labEva.Size = new System.Drawing.Size(56, 17);
@@ -196,7 +197,7 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(214, 195);
+            this.button2.Location = new System.Drawing.Point(214, 159);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(175, 23);
             this.button2.TabIndex = 12;
@@ -204,11 +205,22 @@
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(214, 196);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(175, 23);
+            this.button1.TabIndex = 13;
+            this.button1.Text = "Tiny";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(401, 230);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.labEva);
             this.Controls.Add(this.label8);
@@ -246,6 +258,7 @@
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Label labEva;
         private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button button1;
     }
 }
 
