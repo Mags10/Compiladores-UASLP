@@ -49,6 +49,7 @@
   <ItemGroup>
     <Compile Include="Algoritmos\Automatas.cs" />
     <Compile Include="Algoritmos\ConvPosFija.cs" />
+    <Compile Include="Algoritmos\Gramaticas.cs" />
     <Compile Include="Algoritmos\TinyProcessor.cs" />
     <Compile Include="Formularios\Form1.cs">
       <SubType>Form</SubType>
