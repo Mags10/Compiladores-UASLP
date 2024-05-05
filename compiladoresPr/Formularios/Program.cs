@@ -33,25 +33,11 @@ namespace compiladoresPr
             */
 
             /*
-                A -> B
-                B -> C B'
-                B' -> ; C B' | #
-                C -> D | E | F | G | H
-                D -> if I then B D'
-                D' -> end | else B end
-                E -> repeat B until I
-                F -> identificador := I
-                G -> read identificador
-                H -> write I
-                I -> K J K | K
-                J -> < | > | =
-                K -> M K'
-                K' -> L M K' | #
-                L -> + | -
-                M -> O M'
-                M' -> N O M' | #
-                N -> * | /
-                O -> ( I ) | numero | identificador
+                S -> BDS'
+                S' -> a | c | ε
+                B -> b | ε
+                D -> dD' | ε
+                D' -> ε | D
              */
 
             p = new Produccion("A");
@@ -153,7 +139,9 @@ namespace compiladoresPr
 
             g.calcSiguientes();
 
-            Console.WriteLine(g);
+            //Console.WriteLine(g);
+
+            g.calcTabla();
 
         }
     }

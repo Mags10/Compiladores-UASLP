@@ -11,8 +11,8 @@ namespace compiladoresPr.Algoritmos
         private List<Token> terminales;
         private List<Token> noTerminales;
         private List<Produccion> producciones;
-        List<Tuple<Token, List<Token>>> primeros;
-        List<Siguiente> siguientes;
+        List<SigPrim> primeros;
+        List<SigPrim> siguientes;
         private Produccion inicial = null;
 
         public Gramatica()
@@ -24,40 +24,18 @@ namespace compiladoresPr.Algoritmos
 
         public void addProduccion(Produccion produccion)
         {
-            if (inicial == null)
-            {
-                inicial = produccion;
-            }
+            if (inicial == null) inicial = produccion;
 
             producciones.Add(produccion);
 
             auxAdder(produccion.Productor);
 
-            foreach (List<Token> p in produccion.Producciones)
-            {
-                foreach (Token t in p)
-                {
-                    auxAdder(t);
-                }
-            }
+            foreach (List<Token> p in produccion.Producciones) foreach (Token t in p) auxAdder(t);
+
             void auxAdder(Token t) {
                 if (t.TokenString == "#") return;
-                if (t.Terminal)
-                {
-                    if (!Token.TokenListContains(terminales, t))
-                    {
-                        //Console.WriteLine(t.TokenString + " Terminal: SI");
-                        terminales.Add(t);
-                    }
-                }
-                else
-                {
-                    if (!Token.TokenListContains(noTerminales, t))
-                    {
-                        //Console.WriteLine(t.TokenString + " Terminal: NO");
-                        noTerminales.Add(t);
-                    }
-                }
+                if (t.Terminal && !Token.TokenListContains(terminales, t)) terminales.Add(t);
+                else if (!t.Terminal && !Token.TokenListContains(noTerminales, t)) noTerminales.Add(t);
             }
         }
 
@@ -65,175 +43,94 @@ namespace compiladoresPr.Algoritmos
         {
             string gram = "\n\n";
             gram += "-------------------------------------";
-            gram += "\nProducciones: \n";
-            foreach (Produccion p in producciones)
-            {
-                gram += p + "\n";
-            }
-            
-            gram += "\nInicial: " + inicial.Productor;
-
-
-            gram += "\n\nTerminales: ";
-
-            foreach (Token t in terminales)
-            {
-                gram += t + " ";
-            }
-
-            gram += "\n\nNo Terminales: ";
-
-            foreach (Token t in noTerminales)
-            {
-                gram += t + " ";
-            }
-
+            gram += "\nProducciones: \n" + string.Join("\n", producciones);
+            gram += "\n\nInicial: {" + inicial.Productor + "}";
+            gram += "\n\nTerminales: {" + string.Join(", ", terminales) + "}";
+            gram += "\n\nNo Terminales: {" + string.Join(", ", noTerminales) + "}";
             gram += "\n\nPrimeros: \n";
-            foreach (Tuple<Token, List<Token>> t in primeros)
-            {
-                if (t.Item1 == null || t.Item2 == null) continue;
-                gram += "Primero(" + t.Item1 + ") = {";
-                foreach (Token tok in t.Item2)
-                {
-                    if (tok != t.Item2.Last())
-                        gram += tok + ", ";
-                    else
-                        gram += tok;
-                }
-                gram += "}\n";
-            }
-
+            foreach (SigPrim t in primeros)
+                gram += "Primero(" + t.Token + ") = {" + string.Join(", ", t.TokenList) + "}\n";
             gram += "\nSiguientes: \n";
-            foreach (Siguiente s in siguientes)
-            {
-                gram += "Siguiente(" + s.Token + ") = {";
-                foreach (Token t in s.segundos)
-                {
-                    if (t != s.segundos.Last())
-                        gram += t + ", ";
-                    else
-                        gram += t;
-                }
-                gram += "}\n";
-            }
-
+            foreach (SigPrim s in siguientes)
+                gram += "Siguiente(" + s.Token + ") = {" + string.Join(", ", s.TokenList) + "}\n";
             return gram;
         }
 
         public void calcPrimeros()
         {
-            primeros = new List<Tuple<Token, List<Token>>>();
-            foreach (Token t in terminales)
-            {
-                List<Token> tmp = new List<Token> { t };
-                primeros.Add(new Tuple<Token, List<Token>>(t, tmp));
-            }
-            foreach (Produccion p in producciones)
-            {
-                getPrimeros(p);
-                //tmp.AddRange(getPrimeros(p));
-                //primeros.Add(new Tuple<Token, List<Token>>(t, tmp));
-            }
+
+            int level = 0;
+
+            primeros = new List<SigPrim>();
+            string log = "";
+
+            foreach (Token t in terminales) primeros.Add(new SigPrim(t, t));
+
+            foreach (Produccion p in producciones) getPrimeros(p);
+
+            Console.WriteLine(log);
 
             List<Token> getPrimeros(Produccion p)
             {
-                Console.WriteLine("=====================================");
-                List<Token> res =  getPrimerosAux(p.Productor);
+                // insert \t level times
+                string tmplog = "";
+                for (int i = 0; i < level; i++) tmplog += "\t";
+                tmplog += "|";
+                log += tmplog + "=====================================\n";
+                List<Token> res = getPrimerosAux(p.Productor);
+                log += tmplog + "Calculando primeros de: " + p.Productor + "\n";
                 if (res == null)
                 {
-                    Console.WriteLine("Calculando primeros de: " + p.Productor);
                     res = new List<Token>();
                 }
                 else
                 {
-                    Console.WriteLine("Ya se calcularon los primeros de: " + p.Productor);
+                    log += tmplog + "Ya se calcularon los primeros de: " + p.Productor + "\n";
                     return res;
                 }
                 bool endBand = false;
                 foreach (List<Token> prod in p.Producciones)
                 {
-                    Console.Write("\nProduccion: ");
+                    log += tmplog + "Produccion: " + p.Productor + " -> " + string.Join(" ", prod) + "\n";
+
                     foreach (Token t in prod)
                     {
-                        Console.Write(t + " ");
-                    }
-                    Console.WriteLine();
-
-                    foreach(Token t in prod)
-                    {
-                        Console.WriteLine("Primeros de: " + t);
-                        string strmp = "Token (" + t + ") añade: {";
                         List<Token> preres = getPrimerosAux(t);
-
                         if (preres == null)
                         {
-                            Produccion p2 = getProduction(t);
-                            if (p2 != null)
+                            preres = new List<Token> { new Token("#", true) };
+                            if (t.TokenString != "#")
                             {
+                                level++;
+                                Produccion p2 = getProduction(t);
                                 preres = getPrimeros(p2);
-                            }
-                            else
-                            {
-                                Exception e = new Exception("No se encontro la produccion");
+                                level--;
                             }
                         }
 
-                        if (preres == null)
-                        {
-                            preres = new List<Token>();
-                            preres.Add(new Token("#", true));
-                        }
+                        log += tmplog + "Token (" + t + ") añade: {" + string.Join(" ", preres) + "}\n";
 
-                        //res.AddRange(preres);
-                        // Sin repetir
-                        foreach (Token tok in preres)
-                        {
-                            if (!Token.TokenListContains(res, tok))
-                            {
-                                res.Add(tok);
-                            }
-                        }
-
+                        foreach (Token tok in preres) if (!Token.TokenListContains(res, tok)) res.Add(tok);
                         endBand = !Token.DeleteToken(res, new Token("#", true));
-
-                        foreach (Token tok in preres)
-                        {
-                            strmp += tok + " ";
-                        }
-
-                        strmp += "}";
-                        Console.WriteLine(strmp);
-
                         if (endBand) break;
                     }
-                    if (!endBand)
-                    {
-                        res.Add(new Token("#", true));
-                        Console.WriteLine("Se añade #");
-                    }
-                    else
-                    {
-                        Console.WriteLine("No se añade #");
-                    }
+                    log += tmplog;
+                    log += (endBand)? "No se añade #\n" : "Se añade #\n";
+                    if (!endBand) res.Add(new Token("#", true));
                 }
-                primeros.Add(new Tuple<Token, List<Token>>(p.Productor, res));
-                Console.WriteLine("=====================================");
-
+                primeros.Add(new SigPrim(p.Productor, res));
+                log += tmplog + "Primeros(" + p.Productor + ") = {" + string.Join(", ", res) + "}\n";
+                log += tmplog + "=====================================\n";
                 return res;
             }
 
             List<Token> getPrimerosAux(Token token)
             {
-                foreach (Tuple<Token, List<Token>> tup in primeros)
-                {
-                    if (Token.CompareToken(tup.Item1, token))
-                    {
-                        return tup.Item2;
-                    }
-                }
+                foreach (SigPrim tup in primeros)
+                    if (Token.CompareToken(tup.Token, token))
+                        return tup.TokenList;
                 return null;
             }
-
         }
 
         private Produccion getProduction(Token productor)
@@ -251,20 +148,23 @@ namespace compiladoresPr.Algoritmos
         public void calcSiguientes()
         {
 
-            siguientes = new List<Siguiente>();
-            List<Siguiente> calculando = new List<Siguiente>();
+            string log = "";
+
+            siguientes = new List<SigPrim>();
+            List<SigPrim> calculando = new List<SigPrim>();
 
             foreach (Token t in noTerminales)
             {
-                Siguiente s = new Siguiente(t);
+                SigPrim s = new SigPrim(t);
                 if (Token.CompareToken(t, inicial.Productor))
                 {
-                    s.segundos.Add(new Token("$", true));
+                    s.TokenList.Add(new Token("$", true));
+                    log += "Añadiendo $ a siguientes de " + t + "\n";
                 }
                 siguientes.Add(s);
             }
 
-            foreach (Siguiente sg in siguientes)
+            foreach (SigPrim sg in siguientes)
             {
                 if (!sg.calculated)
                 {
@@ -273,8 +173,7 @@ namespace compiladoresPr.Algoritmos
                 }
             }
 
-
-            void calcSiguienteAux(Siguiente sg)
+            void calcSiguienteAux(SigPrim sg)
             {
 
                 Console.WriteLine("****************************************");
@@ -315,8 +214,8 @@ namespace compiladoresPr.Algoritmos
                         {
                             if (tk.TokenString != "#")
                             {
-                                if (!Token.TokenListContains(sg.segundos, tk))
-                                    sg.segundos.Add(tk);
+                                if (!Token.TokenListContains(sg.TokenList, tk))
+                                    sg.TokenList.Add(tk);
                                 //Console.Write(tk + ", ");
                             } else {
                                 band = true;
@@ -326,23 +225,23 @@ namespace compiladoresPr.Algoritmos
                     if (band || beta.Count == 0)
                     {
                         //Console.Write("Sig(" + sg.Token + ") = {");
-                        Siguiente s = getSiguiente(tup.Item1);
+                        SigPrim s = getSiguiente(tup.Item1);
                         
-                        if (!Siguiente.SiguienteListContains(calculando, s) && !s.calculated)
+                        if (!SigPrim.SiguienteListContains(calculando, s) && !s.calculated)
                         {
                             // Si s en segundoslist de sg entonces hay un ciclo, no calcular
-                            if (!Token.TokenListContains(sg.segundos, s.Token))
+                            if (!Token.TokenListContains(sg.TokenList, s.Token))
                             {
                                 Console.WriteLine("Calculando siguientes de: " + s.Token);
                                 calcSiguienteAux(s);
                             }
                         }
 
-                        foreach (Token t in s.segundos)
+                        foreach (Token t in s.TokenList)
                         {
-                            if (!Token.TokenListContains(sg.segundos, t))
+                            if (!Token.TokenListContains(sg.TokenList, t))
                             {
-                                sg.segundos.Add(t);
+                                sg.TokenList.Add(t);
                                 //Console.Write(t + ", ");
                                 //Console.WriteLine("Añadiendo " + t + " a siguientes de " + sg.Token);
                             }
@@ -355,7 +254,7 @@ namespace compiladoresPr.Algoritmos
                 }
 
                 Console.Write("Sig(" + sg.Token + ") = {");
-                foreach (Token t in sg.segundos)
+                foreach (Token t in sg.TokenList)
                 {
                     Console.Write(t + ", ");
                 }
@@ -363,9 +262,9 @@ namespace compiladoresPr.Algoritmos
                 Console.WriteLine("----------------------------------------");
             }
 
-            Siguiente getSiguiente(Token t)
+            SigPrim getSiguiente(Token t)
             {
-                foreach (Siguiente s in siguientes)
+                foreach (SigPrim s in siguientes)
                 {
                     if (Token.CompareToken(s.Token, t))
                     {
@@ -380,12 +279,12 @@ namespace compiladoresPr.Algoritmos
                 List<Token> res = new List<Token>();
                 foreach (Token t in list)
                 {
-                    foreach (Tuple<Token, List<Token>> tup in primeros)
+                    foreach (SigPrim tup in primeros)
                     {
-                        if (Token.CompareToken(tup.Item1, t))
+                        if (Token.CompareToken(tup.Token, t))
                         {
                             //res.AddRange(tup.Item2); // Sin repetir
-                            foreach (Token tok in tup.Item2)
+                            foreach (Token tok in tup.TokenList)
                             {
                                 if (!Token.TokenListContains(res, tok))
                                 {
@@ -436,6 +335,154 @@ namespace compiladoresPr.Algoritmos
                 return res;
             }
 
+        }
+
+        public void calcTabla()
+        {
+            List<List<Produccion>> resTable = new List<List<Produccion>>();
+            // Create table NxM where N = noTerminales.Count and M = terminales.Count
+            for (int i = 0; i < noTerminales.Count; i++)
+            {
+                List<Produccion> row = new List<Produccion>();
+                for (int j = 0; j < terminales.Count + 1; j++)
+                {
+                    row.Add(null);
+                }
+                resTable.Add(row);
+            }
+            foreach (Produccion produccion in producciones)
+            {
+                Console.WriteLine("Produccion: " + produccion);
+                foreach (List<Token> p in produccion.Producciones)
+                {
+                    Console.WriteLine("Produccion: " + string.Join(" ", p));
+                    List<Token> sigPrims = primOf(p);
+                    Console.WriteLine("Primeros(" + string.Join("", p) + ") = {" + string.Join(", ", sigPrims) + "}");
+                    if (sigPrims.Count != 0)
+                    {
+                        bool band = false;
+                        foreach (Token s in sigPrims)
+                        {
+                            if (s.TokenString != "#")
+                            {
+                                int row = getRow(produccion.Productor);
+                                int col = getCol(s);
+                                resTable[row][col] = new Produccion(produccion.Productor.TokenString, p);
+                                Console.WriteLine("Tabla[" + produccion.Productor + ", " + s + "] = " + resTable[row][col]);
+                            }
+                            else
+                            {
+                                band = true;
+                            }
+                        }
+                        if (band)
+                        {
+                            List<Token> sigs = getSiguiente(produccion.Productor);
+                            Console.WriteLine("Siguientes(" + produccion.Productor + ") = {" + string.Join(", ", sigs) + "}");
+                            foreach (Token s in sigs)
+                            {
+                                int row = getRow(produccion.Productor);
+                                int col = getCol(s);
+                                Console.WriteLine("row: " + row + " col: " + col);
+                                resTable[row][col] = new Produccion(produccion.Productor.TokenString, p);
+                                Console.WriteLine("Tabla[" + produccion.Productor + ", " + s + "] = " + resTable[row][col]);
+                            }
+                        }
+                    }
+                }
+            }
+
+            Console.WriteLine("Tabla: ");
+            // Print table with headers and nice format with tabs
+            Console.Write("\t");
+            foreach (Token t in terminales)
+            {
+                Console.Write(t + "\t");
+            }
+            Console.WriteLine("$");
+            for (int i = 0; i < noTerminales.Count; i++)
+            {
+                Console.Write(noTerminales[i] + "\t");
+                for (int j = 0; j < terminales.Count + 1; j++)
+                {
+                    Console.Write(resTable[i][j] + "\t");
+                }
+                Console.WriteLine();
+            }
+
+
+
+            int getCol(Token t)
+            {
+                for (int i = 0; i < terminales.Count; i++)
+                {
+                    if (Token.CompareToken(terminales[i], t))
+                    {
+                        return i;
+                    }
+                }
+                if (t.TokenString == "$") return terminales.Count;
+                return -1;
+            }
+
+            int getRow(Token t)
+            {
+                for (int i = 0; i < noTerminales.Count; i++)
+                {
+                    if (Token.CompareToken(noTerminales[i], t))
+                    {
+                        return i;
+                    }
+                }
+                return -1;
+            }
+
+            List<Token> getSiguiente(Token t)
+            {
+                foreach (SigPrim s in siguientes)
+                {
+                    if (Token.CompareToken(s.Token, t))
+                    {
+                        return s.TokenList;
+                    }
+                }
+                return new List<Token>();
+            }
+
+            List<Token> primOf(List<Token> list)
+            {
+                //Console.WriteLine("\tList: " + string.Join(" ", list));
+                List<Token> res = new List<Token> { };   
+                foreach (Token t in list)
+                {
+                    //Console.WriteLine("\tToken: " + t);
+                    foreach (SigPrim tup in primeros)
+                    {
+                        if (Token.CompareToken(tup.Token, t))
+                        {
+                            bool band = Token.TokenListContains(tup.TokenList, new Token("#", true));
+                            foreach (Token tok in tup.TokenList)
+                            {
+                                if (!Token.TokenListContains(res, tok) && tok.TokenString != "#")
+                                {
+                                    //Console.WriteLine("\t\t\tAdding: " + tok);
+                                    res.Add(tok);
+                                }
+                            }
+                            if (!band)
+                            {
+                                //Console.WriteLine("\t\t\tReturning: " + string.Join(" ", res));
+                                return res;
+                            }
+                        }
+                    }
+                }
+                // Add #
+                //Console.WriteLine("\tAdding: #");
+                res.Add(new Token("#", true));
+                //Console.WriteLine("\tReturning: " + string.Join(" ", res));
+                return res;
+            }
         }
 
     }
@@ -507,26 +554,41 @@ namespace compiladoresPr.Algoritmos
 
     }
 
-    internal class Siguiente
+    internal class SigPrim
     {
         public bool calculated = false;
         public Token Token;
-        public List<Token> segundos;
+        public List<Token> TokenList;
         
-        public Siguiente(Token token)
+        public SigPrim(Token token)
         {
             Token = token;
-            segundos = new List<Token>();
+            TokenList = new List<Token>();
         }
 
-        public static bool CompareSiguiente(Siguiente s1, Siguiente s2)
+        public SigPrim(Token token, List<Token> tokenList)
+        {
+            Token = token;
+            TokenList = tokenList;
+        }
+
+        // recive token and a indefine list of Tokens
+        public SigPrim(Token token, params object[] tokens)
+        {
+            Token = token;
+            TokenList = new List<Token>();
+            foreach (object t in tokens)TokenList.Add((Token)t);
+        }
+
+
+        public static bool CompareSiguiente(SigPrim s1, SigPrim s2)
         {
             return Token.CompareToken(s1.Token, s2.Token);
         }
 
-        public static bool SiguienteListContains(List<Siguiente> list, Siguiente s)
+        public static bool SiguienteListContains(List<SigPrim> list, SigPrim s)
         {
-            foreach (Siguiente sg in list)
+            foreach (SigPrim sg in list)
             {
                 if (CompareSiguiente(sg, s))
                 {
