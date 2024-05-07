@@ -121,7 +121,7 @@ namespace compiladoresPr
 
         private void button3_Click(object sender, EventArgs e)
         {
-            new TablaAS().Show();
+            new TablaAS().ShowDialog();
 
         }
     }

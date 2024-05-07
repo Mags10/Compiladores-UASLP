@@ -1,0 +1,121 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="compiladoresPr.State" Collapsed="true">
+    <Position X="0.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAQAAAAEAAAAAAAAAAAAQAAIQEAACAAAAAAAAAAAA=</HashCode>
+      <FileName>Algoritmos\Automatas.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="compiladoresPr.Transition" Collapsed="true">
+    <Position X="0.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAgAAAAIAAAAAAAAAAAAAAAAEAIAgBAAAAAA=</HashCode>
+      <FileName>Algoritmos\Automatas.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="compiladoresPr.Automata" Collapsed="true">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQEIBIABgADMgGCCQIBAACACDCAAGBOAACgQBEEgSIA=</HashCode>
+      <FileName>Algoritmos\Automatas.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="compiladoresPr.ConvPosFija" Collapsed="true">
+    <Position X="2.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAAAAAAAgAAAgAAAAAAQEAIAAEAAAAgAAAAAA=</HashCode>
+      <FileName>Algoritmos\ConvPosFija.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="compiladoresPr.EvaPosFija" Collapsed="true">
+    <Position X="4" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAQAAAAAAAAAAQAAAAAQAACAAAAAAAEAACAAA=</HashCode>
+      <FileName>Algoritmos\ConvPosFija.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="compiladoresPr.Form1" Collapsed="true">
+    <Position X="2.25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAAAAAACAIgBQAAACCAgACAAQ8AAgEFHAAgRBAQAA=</HashCode>
+      <FileName>Formularios\Form1.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="compiladoresPr.Program" Collapsed="true">
+    <Position X="2.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAA=</HashCode>
+      <FileName>Formularios\Program.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="compiladoresPr.Algoritmos.Gramatica">
+    <Position X="5.75" Y="0.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>CEAAAAAgAAAIAAAEACAAAIAACAAEEAAQAAQAAYgAAAA=</HashCode>
+      <FileName>Algoritmos\Gramaticas.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="compiladoresPr.Algoritmos.Produccion">
+    <Position X="7.75" Y="0.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAABQAAAEQAAAAAQAAAAEAAAAAAAAAQAAAAA=</HashCode>
+      <FileName>Algoritmos\Gramaticas.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="compiladoresPr.Algoritmos.SigPrim" Collapsed="true">
+    <Position X="4" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAQAAAAAAgAAAAAAAAAAAAAAAAAIAIAABAAA=</HashCode>
+      <FileName>Algoritmos\Gramaticas.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="compiladoresPr.Algoritmos.Token">
+    <Position X="10.5" Y="0.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAEAAAQAQAAABAAEAAQAAEAAAAAAAAAgAAAAAAAAQAA=</HashCode>
+      <FileName>Algoritmos\Gramaticas.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="compiladoresPr.Algoritmos.TinyProcessor" Collapsed="true">
+    <Position X="0.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAGAAkAAAAAAQACAAIAAgAAAIAAAAADAAAAAAAAAAAA=</HashCode>
+      <FileName>Algoritmos\TinyProcessor.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="compiladoresPr.Formularios.TablaAS" Collapsed="true">
+    <Position X="2.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAACAAAACACAAAAAAAAAAAQAAAQA=</HashCode>
+      <FileName>Formularios\TablaAS.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="compiladoresPr.Formularios.Tiny" Collapsed="true">
+    <Position X="4" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAMAASAAABUAAACAAAASAAgAAAAQECAQAAAAAIA=</HashCode>
+      <FileName>Formularios\Tiny.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="compiladoresPr.Formularios.TransitionTable" Collapsed="true">
+    <Position X="2.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>8yAAAAAQASEAABCAEACAAABCIBgAAIAwECAAAAAEAIA=</HashCode>
+      <FileName>Formularios\TransitionTable.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="compiladoresPr.Properties.Resources" Collapsed="true">
+    <Position X="4" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAABEAAAAQAAAAAAAAAAAAAAAIA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="compiladoresPr.Properties.Settings" Collapsed="true">
+    <Position X="0.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAIAAAAAABAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

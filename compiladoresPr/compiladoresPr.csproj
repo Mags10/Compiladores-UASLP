@@ -51,6 +51,12 @@
     <Compile Include="Algoritmos\ConvPosFija.cs" />
     <Compile Include="Algoritmos\Gramaticas.cs" />
     <Compile Include="Algoritmos\TinyProcessor.cs" />
+    <Compile Include="Formularios\CalculoConjuntos.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Formularios\CalculoConjuntos.Designer.cs">
+      <DependentUpon>CalculoConjuntos.cs</DependentUpon>
+    </Compile>
     <Compile Include="Formularios\Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -77,6 +83,9 @@
       <DependentUpon>TransitionTable.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Formularios\CalculoConjuntos.resx">
+      <DependentUpon>CalculoConjuntos.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Formularios\Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
@@ -98,6 +107,7 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <None Include="DiagramaClases.cd" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

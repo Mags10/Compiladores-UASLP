@@ -13,121 +13,108 @@ namespace compiladoresPr.Formularios
 {
     public partial class TablaAS : Form
     {
+        private Gramatica g;
+
         public TablaAS()
         {
             InitializeComponent();
 
-            Gramatica g = new Gramatica();
+            g = new Gramatica();
 
             Produccion p;
-
-            /* Ejemplo 1 
-            // A -> Ba | d
-            p = new Produccion("A");
-            p.addProduccion("B", false, "a", true);
-            p.addProduccion("d", true);
-            g.addProduccion(p);
-            */
-
-            /*
-                S -> BDS'
-                S' -> a | c | ε
-                B -> b | ε
-                D -> dD' | ε
-                D' -> ε | D
-            */
             #region Producciones
-                p = new Produccion("A");
-                p.addProduccion("B", false);
+
+                p = new Produccion("programa");
+                p.addProduccion("secuencia-set", false);
                 g.addProduccion(p);
 
-                p = new Produccion("B");
-                p.addProduccion("C", false, "B'", false);
+                p = new Produccion("secuencia-set");
+                p.addProduccion("sentencia", false, "secuencia-set'", false);
                 g.addProduccion(p);
 
-                p = new Produccion("B'");
-                p.addProduccion(";", true, "C", false, "B'", false);
+                p = new Produccion("secuencia-set'");
+                p.addProduccion(";", true, "sentencia", false, "secuencia-set'", false);
                 p.addProduccion("#", true);
                 g.addProduccion(p);
 
-                p = new Produccion("C");
-                p.addProduccion("D", false);
-                p.addProduccion("E", false);
-                p.addProduccion("F", false);
-                p.addProduccion("G", false);
-                p.addProduccion("H", false);
+                p = new Produccion("sentencia");
+                p.addProduccion("sent-if", false);
+                p.addProduccion("sent-repeat", false);
+                p.addProduccion("sent-assign", false);
+                p.addProduccion("sent-read", false);
+                p.addProduccion("sent-write", false);
                 g.addProduccion(p);
 
-                p = new Produccion("D");
-                p.addProduccion("if", true, "I", false, "then", true, "B", false, "D'", false);
+                p = new Produccion("sent-if");
+                p.addProduccion("if", true, "exp", false, "then", true, "secuencia-set", false, "sent-if'", false);
                 g.addProduccion(p);
 
-                p = new Produccion("D'");
+                p = new Produccion("sent-if'");
                 p.addProduccion("end", true);
-                p.addProduccion("else", true, "B", false, "end", true);
+                p.addProduccion("else", true, "secuencia-set", false, "end", true);
                 g.addProduccion(p);
 
-                p = new Produccion("E");
-                p.addProduccion("repeat", true, "B", false, "until", true, "I", false);
+                p = new Produccion("sent-repeat");
+                p.addProduccion("repeat", true, "secuencia-set", false, "until", true, "exp", false);
                 g.addProduccion(p);
 
-                p = new Produccion("F");
-                p.addProduccion("identificador", true, ":=", true, "I", false);
+                p = new Produccion("sent-assign");
+                p.addProduccion("identificador", true, ":=", true, "exp", false);
                 g.addProduccion(p);
 
-                p = new Produccion("G");
+                p = new Produccion("sent-read");
                 p.addProduccion("read", true, "identificador", true);
                 g.addProduccion(p);
 
-                p = new Produccion("H");
-                p.addProduccion("write", true, "I", false);
+                p = new Produccion("sent-write");
+                p.addProduccion("write", true, "exp", false);
                 g.addProduccion(p);
 
-                p = new Produccion("I");
-                p.addProduccion("K", false, "I'", false);
+                p = new Produccion("exp");
+                p.addProduccion("exp-simple", false, "exp'", false);
                 g.addProduccion(p);
 
-                p = new Produccion("I'");
-                p.addProduccion("J", false, "K", false);
+                p = new Produccion("exp'");
+                p.addProduccion("op-comp", false, "exp-simple", false);
                 p.addProduccion("#", false);
                 g.addProduccion(p);
 
-                p = new Produccion("J");
+                p = new Produccion("op-comp");
                 p.addProduccion("<", true);
                 p.addProduccion(">", true);
                 p.addProduccion("=", true);
                 g.addProduccion(p);
 
-                p = new Produccion("K");
-                p.addProduccion("M", false, "K'", false);
+                p = new Produccion("exp-simple");
+                p.addProduccion("term", false, "exp-simple'", false);
                 g.addProduccion(p);
 
-                p = new Produccion("K'");
-                p.addProduccion("L", false, "M", false, "K'", false);
+                p = new Produccion("exp-simple'");
+                p.addProduccion("opsuma", false, "term", false, "exp-simple'", false);
                 p.addProduccion("#", true);
                 g.addProduccion(p);
 
-                p = new Produccion("L");
+                p = new Produccion("opsuma");
                 p.addProduccion("+", true);
                 p.addProduccion("-", true);
                 g.addProduccion(p);
 
-                p = new Produccion("M");
-                p.addProduccion("O", false, "M'", false);
+                p = new Produccion("term");
+                p.addProduccion("factor", false, "term'", false);
                 g.addProduccion(p);
 
-                p = new Produccion("M'");
-                p.addProduccion("N", false, "O", false, "M'", false);
+                p = new Produccion("term'");
+                p.addProduccion("opmult", false, "factor", false, "term'", false);
                 p.addProduccion("#", true);
                 g.addProduccion(p);
 
-                p = new Produccion("N");
+                p = new Produccion("opmult");
                 p.addProduccion("*", true);
                 p.addProduccion("/", true);
                 g.addProduccion(p);
 
-                p = new Produccion("O");
-                p.addProduccion("(", true, "I", false, ")", true);
+                p = new Produccion("factor");
+                p.addProduccion("(", true, "exp", false, ")", true);
                 p.addProduccion("numero", true);
                 p.addProduccion("identificador", true);
                 g.addProduccion(p);
@@ -137,19 +124,26 @@ namespace compiladoresPr.Formularios
                 g.calcSiguientes();
 
                 g.calcTabla();
-                TabAS = g.TablaAS(this.TabAS);
+                TabAS = g.TablaAS(this);
+
+                //Console.WriteLine(g);
             #endregion
 
         }
 
-        private void TablaAS_Load(object sender, EventArgs e)
+        private void toolStripButton1_Click(object sender, EventArgs e)
         {
-            TabAS.Show();
+            new CalculoConjuntos(g.PrimLog, g.primString()).ShowDialog();
         }
 
-        private void TabAS_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        private void toolStripButton3_Click(object sender, EventArgs e)
         {
+            new CalculoConjuntos(g.SigLog, g.sigString()).ShowDialog();
+        }
 
+        private void toolStripButton2_Click(object sender, EventArgs e)
+        {
+            new CalculoConjuntos(g.TablaLog, "").ShowDialog();
         }
     }
 }
