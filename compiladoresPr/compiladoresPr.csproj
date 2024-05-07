@@ -58,6 +58,12 @@
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="Formularios\Program.cs" />
+    <Compile Include="Formularios\TablaAS.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Formularios\TablaAS.Designer.cs">
+      <DependentUpon>TablaAS.cs</DependentUpon>
+    </Compile>
     <Compile Include="Formularios\Tiny.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -73,6 +79,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Formularios\Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Formularios\TablaAS.resx">
+      <DependentUpon>TablaAS.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Formularios\Tiny.resx">
       <DependentUpon>Tiny.cs</DependentUpon>

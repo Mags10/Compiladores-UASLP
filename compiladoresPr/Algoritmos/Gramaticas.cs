@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace compiladoresPr.Algoritmos
 {
@@ -11,6 +12,7 @@ namespace compiladoresPr.Algoritmos
         private List<Token> terminales;
         private List<Token> noTerminales;
         private List<Produccion> producciones;
+        private List<List<Produccion>> resTable = new List<List<Produccion>>();
         List<SigPrim> primeros;
         List<SigPrim> siguientes;
         private Produccion inicial = null;
@@ -144,7 +146,10 @@ namespace compiladoresPr.Algoritmos
             }
             return null;
         }
-
+        public List<List<Produccion>> getProductions()
+        {
+            return resTable;
+        }
         public void calcSiguientes()
         {
 
@@ -339,7 +344,7 @@ namespace compiladoresPr.Algoritmos
 
         public void calcTabla()
         {
-            List<List<Produccion>> resTable = new List<List<Produccion>>();
+            
             // Create table NxM where N = noTerminales.Count and M = terminales.Count
             for (int i = 0; i < noTerminales.Count; i++)
             {
@@ -409,7 +414,7 @@ namespace compiladoresPr.Algoritmos
                 }
                 Console.WriteLine();
             }
-
+            
 
 
             int getCol(Token t)
@@ -483,6 +488,34 @@ namespace compiladoresPr.Algoritmos
                 //Console.WriteLine("\tReturning: " + string.Join(" ", res));
                 return res;
             }
+            
+        }
+        public DataGridView TablaAS(DataGridView dataGridView1)
+        {                       
+            dataGridView1.ColumnCount = terminales.Count + 1;
+            dataGridView1.Columns[0].Name = "";
+            
+            for (int i = 0; i < terminales.Count; i++)
+            {
+                dataGridView1.Columns[i].Name = terminales[i].TokenString;                
+            }
+            dataGridView1.Columns[terminales.Count].Name = "$";
+
+            
+            for (int i = 0; i < noTerminales.Count; i++)
+            {
+                DataGridViewRow row = new DataGridViewRow();
+                row.CreateCells(dataGridView1);
+                row.Cells[0].Value = noTerminales[i].TokenString;
+                for (int j = 0; j < terminales.Count + 1; j++)
+                {
+                    row.Cells[j].Value = resTable[i][j]?.ToString() ?? ""; 
+                }
+                dataGridView1.Rows.Add(row);
+                dataGridView1.Rows[i].HeaderCell.Value = noTerminales[i].TokenString;
+            }
+            return dataGridView1;
+
         }
 
     }

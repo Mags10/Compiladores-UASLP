@@ -15,22 +15,23 @@ namespace compiladoresPr
         [STAThread]
         static void Main()
         {
-            /*
+            
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Form1());
-            */
-            Gramatica g = new Gramatica();
+            
+            /*
+        Gramatica g = new Gramatica();
 
-            Produccion p;
+        Produccion p;
 
-            /* Ejemplo 1 
-            // A -> Ba | d
-            p = new Produccion("A");
-            p.addProduccion("B", false, "a", true);
-            p.addProduccion("d", true);
-            g.addProduccion(p);
-            */
+        /* Ejemplo 1 
+        // A -> Ba | d
+        p = new Produccion("A");
+        p.addProduccion("B", false, "a", true);
+        p.addProduccion("d", true);
+        g.addProduccion(p);
+       
 
             /*
                 S -> BDS'
@@ -38,7 +39,7 @@ namespace compiladoresPr
                 B -> b | ε
                 D -> dD' | ε
                 D' -> ε | D
-             */
+            
 
             p = new Produccion("A");
             p.addProduccion("B", false);
@@ -142,7 +143,7 @@ namespace compiladoresPr
             //Console.WriteLine(g);
 
             g.calcTabla();
-
+            */
         }
     }
 }   

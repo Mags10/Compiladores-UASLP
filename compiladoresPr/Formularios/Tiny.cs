@@ -71,5 +71,10 @@ namespace compiladoresPr.Formularios
         {
             this.richTextBox1_TextChanged(sender, e);
         }
+
+        private void groupBox1_Enter(object sender, EventArgs e)
+        {
+
+        }
     }
 }
