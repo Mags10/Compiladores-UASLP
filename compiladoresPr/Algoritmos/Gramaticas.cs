@@ -190,10 +190,12 @@ namespace compiladoresPr.Algoritmos
             }
             return null;
         }
+
         public List<List<Produccion>> getProductions()
         {
             return resTable;
         }
+
         public void calcSiguientes()
         {
             int level = 0;
@@ -385,6 +387,7 @@ namespace compiladoresPr.Algoritmos
         public void calcTabla()
         {
             string log = "|==========================================================================\n";
+            // Iniializa la tabla
             for (int i = 0; i < noTerminales.Count; i++)
             {
                 List<Produccion> row = new List<Produccion>();
@@ -394,16 +397,20 @@ namespace compiladoresPr.Algoritmos
                 }
                 resTable.Add(row);
             }
+            // Se recorren producciones
             foreach (Produccion produccion in producciones)
             {
                 foreach (List<Token> p in produccion.Producciones)
                 {
+                    // Se obtienen los primeros de la produccion
                     List<Token> sigPrims = primOf(p);
                     log += "|Produccion: " + produccion.Productor + " -> " + string.Join(" ", p) + "\n";
                     log += "|  Primeros(" + string.Join("", p) + ") = {" + string.Join(", ", sigPrims) + "}\n";
+                    // Se recorren los primeros
                     if (sigPrims.Count != 0)
                     {
                         bool band = false;
+                        // Para cada token (terminal) en los primeros se añade la produccion a la tabla
                         foreach (Token s in sigPrims)
                         {
                             if (s.TokenString != "#")
@@ -418,11 +425,13 @@ namespace compiladoresPr.Algoritmos
                                 band = true;
                             }
                         }
+                        // Si # esta en los primeros se añaden los siguientes
                         if (band)
                         {
                             List<Token> sigs = getSiguiente(produccion.Productor);
                             log += "|  Existe # en primeros de la produccion\n";
                             log += "|  Siguientes(" + produccion.Productor + ") = {" + string.Join(", ", sigs) + "}\n";
+                            // Para cada token (terminal) en los siguientes se añade la produccion a la tabla
                             foreach (Token s in sigs)
                             {
                                 int row = getRow(produccion.Productor);
@@ -533,6 +542,196 @@ namespace compiladoresPr.Algoritmos
             }
             return dataGridView1;
 
+        }
+
+        public void elementosLR()
+        {
+            Produccion inic = new Produccion(this.inicial.Productor.TokenString + "'");
+            inic.addProduccion(".", true, this.inicial.Productor.TokenString, false);
+
+            List<String> header = new List<String>() { "I0" };
+            List<List<Produccion>> res = new List<List<Produccion>>();
+            List<Produccion> C = Cerradura(this.producciones, new List<Produccion>() { inic });
+            
+            List<Produccion> Jr = new List<Produccion>();
+            Jr.AddRange(C);
+            res.Add(Jr);
+
+            List<Token> simbolos = new List<Token>();
+            simbolos.AddRange(this.terminales);
+            simbolos.AddRange(this.noTerminales);
+
+            bool added = true;
+            int k = 0;
+            while (added)
+            {
+                added = false;
+                for (; k < res.Count; )
+                {
+                    foreach (Produccion produccion in res[k])
+                    { 
+                        foreach (List<Token> prd in produccion.Producciones)
+                        {
+                            List<Produccion> I = res[k];
+                            Console.WriteLine("Lista: " + string.Join(", ", I));
+                            Console.WriteLine("Iterado: " + k);
+                            foreach (Token X in simbolos)
+                            {
+                                List<Produccion> J = irA(I, X);
+                                if (J.Count != 0 && !ProduccionListContainsList(res, J))
+                                {
+                                    Console.WriteLine("Añadiendo: " + string.Join(", ", J));
+                                    res.Add(J);
+                                    added = true;
+                                    header.Add("I" + res.IndexOf(J));
+                                    Console.WriteLine("Transicion: I" + k + " - (" + X + ") -> I" + res.IndexOf(J));
+                                }
+                            }
+                            k++;
+                        }
+                    }
+                }
+            }
+
+            Console.WriteLine("Elementos LR: ");
+            for(int i = 0; i < res.Count; i++)
+            {
+                Console.WriteLine("I" + i + " = {" + string.Join(", ", res[i]) + "}");
+            }
+
+            List<Produccion> irA(List<Produccion> I, Token X)
+            {
+                Console.WriteLine("\n********-------------------********");
+                Console.WriteLine("IrA([" + string.Join(", ", I) + "], " + X + ")");
+                List<Produccion> resir = new List<Produccion>();
+                foreach (Produccion produccion in I)
+                {
+                    foreach (List<Token> p in produccion.Producciones)
+                    {
+                        //Console.WriteLine(produccion.Productor + " -> " + string.Join(" ", p));
+                        for (int i = 0; i < p.Count; i++)
+                        {
+                            if (p[i].TokenString == ".")
+                            {
+                                //Console.WriteLine("Se encontro .");
+                                //if (i + 1 < p.Count) Console.WriteLine("Siguiente: " + p[i + 1]);
+                                if (i + 1 < p.Count && Token.CompareToken(p[i + 1], X))
+                                {
+                                    Console.WriteLine("Se encontro X, Intercambiando");
+                                    List<Token> tmp2 = new List<Token>();
+                                    tmp2.AddRange(p);
+                                    tmp2[i] = p[i + 1];
+                                    tmp2[i + 1] = new Token(".", true);
+                                    Produccion p2 = new Produccion(produccion.Productor.TokenString);
+                                    p2.addProduccion(tmp2);
+                                    Console.WriteLine("Produccion: " + p2);
+                                    // return Cerradura(this.producciones, new List<Produccion>() { p2 });
+                                    List<Produccion> tmpr = Cerradura(this.producciones, new List<Produccion>() { p2 }); 
+                                    resir.AddRange(tmpr);
+                                }
+                            }
+                        }
+                    }
+                }
+                Console.WriteLine("Res = {" + string.Join(", ", resir) + "}");
+                Console.WriteLine("********-------------------********\n");
+                return resir;
+            }
+
+            List<Produccion> Cerradura(List<Produccion> producciones, List<Produccion> cerradura)
+            {
+                Console.WriteLine("-------------------");
+                Console.WriteLine("Cerradura(" + string.Join(", ", cerradura) + ")");
+                Console.WriteLine("Añadiendo: " + string.Join(", ", cerradura));
+                List<Produccion> J = new List<Produccion>();
+                J.AddRange(cerradura);
+                bool band = true;
+                while (band)
+                {
+                    band = false;
+                    for (int i = 0; i < J.Count; i++)
+                    {
+                        Produccion p = J[i];
+                        foreach (List<Token> prd in p.Producciones) { 
+                            Token B = getBeta(prd);
+                            if (B != null && !B.Terminal)
+                            {
+                                Produccion p2 = getProduction(B);
+                                //Console.WriteLine("Produccion: " + p2);
+
+                                if (p2 != null)
+                                {
+                                    //Console.WriteLine("Beta: " + B);
+                                    foreach (List<Token> prd2 in p2.Producciones)
+                                    {
+                                        // Prd2 tiene la forma B -> gamma
+                                        // Se añade B -> .gamma a J
+                                        Produccion p3 = new Produccion(B.TokenString);
+                                        p3.addProduccion(".", true);
+                                        if (prd2[0].TokenString != "#")
+                                        {
+                                            p3.Producciones[0].AddRange(prd2);
+                                        }
+
+                                        if (!ProduccionListContains(J, p3))
+                                        {
+                                            J.Add(p3);
+                                            Console.WriteLine("Añadiendo: " + p3);
+                                            band = true;
+                                        }
+
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                //Console.WriteLine("Cerradura: " + string.Join(", ", J));
+                Console.WriteLine("-------------------");
+                return J;
+            }
+
+            bool ProduccionListContainsList(List<List<Produccion>> list, List<Produccion> p)
+            {
+                foreach (List<Produccion> pr in list)
+                {
+                    foreach (Produccion pr2 in pr)
+                    {
+                        if (!ProduccionListContains(p, pr2))
+                        {
+                            return false;
+                        }
+                    }
+                }
+                return true;
+            }
+
+            bool ProduccionListContains(List<Produccion> list, Produccion p)
+            {
+                foreach (Produccion pr in list)
+                {
+                    if (pr.ToString() == p.ToString())
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            Token getBeta(List <Token> prod)
+            {
+                for (int i = 0; i < prod.Count; i++)
+                {
+                    if (prod[i].TokenString == ".")
+                    {
+                        if (i + 1 < prod.Count)
+                        {
+                            return prod[i + 1];
+                        }
+                    }
+                }
+                return null;
+            }
         }
 
     }
@@ -691,6 +890,7 @@ namespace compiladoresPr.Algoritmos
 
         public static bool CompareToken(Token t1, Token t2)
         {
+            //Console.WriteLine("Comparing: " + t1.TokenString + "=" + t2.TokenString + " & " + t1.Terminal + "=" + t2.Terminal);
             return t1.TokenString == t2.TokenString && t1.Terminal == t2.Terminal;
         }
 

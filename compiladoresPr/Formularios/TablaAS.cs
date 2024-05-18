@@ -22,7 +22,31 @@ namespace compiladoresPr.Formularios
             g = new Gramatica();
 
             Produccion p;
+
             #region Producciones
+
+            /*
+                programa -> secuencia-set 
+                secuencia-set -> sentencia secuencia-set' 
+                secuencia-set' -> ; sentencia secuencia-set' | # 
+                sentencia -> sent-if | sent-repeat | sent-assign | sent-read | sent-write 
+                sent-if -> if exp then secuencia-set sent-if' 
+                sent-if' -> end | else secuencia-set end 
+                sent-repeat -> repeat secuencia-set until exp 
+                sent-assign -> identificador := exp 
+                sent-read -> read identificador 
+                sent-write -> write exp 
+                exp -> exp-simple exp' 
+                exp' -> op-comp exp-simple | # 
+                op-comp -> < | > | = 
+                exp-simple -> term exp-simple' 
+                exp-simple' -> opsuma term exp-simple' | # 
+                opsuma -> + | - 
+                term -> factor term' 
+                term' -> opmult factor term' | # 
+                opmult -> * | / 
+                factor -> ( exp ) | numero | identificador
+             
 
                 p = new Produccion("programa");
                 p.addProduccion("secuencia-set", false);
@@ -118,16 +142,25 @@ namespace compiladoresPr.Formularios
                 p.addProduccion("numero", true);
                 p.addProduccion("identificador", true);
                 g.addProduccion(p);
-
-                g.calcPrimeros();
-
-                g.calcSiguientes();
-
-                g.calcTabla();
-                TabAS = g.TablaAS(this);
-
-                //Console.WriteLine(g);
+            
+            */
             #endregion
+
+            Produccion test = new Produccion("E");
+            test.addProduccion("E", false, "+", true, "id", true);
+            test.addProduccion("id", true);
+            g.addProduccion(test);
+
+            //g.calcPrimeros();
+
+            //g.calcSiguientes();
+
+            //g.calcTabla();
+            //TabAS = g.TablaAS(this);
+
+            g.elementosLR();
+
+            //Console.WriteLine(g);
 
         }
 
