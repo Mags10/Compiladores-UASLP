@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 namespace compiladoresPr.Algoritmos
 {
-    internal class Gramatica
+    public class Gramatica
     {
         private List<Token> terminales;
         private List<Token> noTerminales;
@@ -35,6 +35,11 @@ namespace compiladoresPr.Algoritmos
         {
             get { return tablaLog.Replace('#', 'ε'); }
             set { tablaLog = value; }
+        }
+
+        public List<String> terminalesString()
+        {
+            return terminales.Select(t => t.TokenString).ToList();
         }
 
         public Gramatica()
@@ -544,6 +549,156 @@ namespace compiladoresPr.Algoritmos
 
         }
 
+        internal class Nodo
+        {
+            public Token token;
+            public Nodo parent;
+            public List<Nodo> hijos;
+            public int cursor = 0;
+            public Nodo(Token cab)
+            {
+                //Console.WriteLine("Creando nodo: " + cab.TokenString);
+                this.token = cab;
+                this.hijos = new List<Nodo>();
+            }
+            public Nodo(Token cab, Nodo parent)
+            {
+                this.token = cab;
+                this.parent = parent;
+                this.hijos = new List<Nodo>();
+            }
+            public void addHijo(Token t)
+            {
+                //Console.WriteLine("Añade hijo a " + this.token.TokenString + ": " + t.TokenString);
+                this.hijos.Add(new Nodo(t,this));
+            }
+        }
+
+        public void analisisSintactico(String cadena)
+        {
+            Nodo tmp = new Nodo(inicial.Productor);
+            TinyProcessor tinyProcessor = new TinyProcessor("[a-z]+", "[0-9]+");
+            List<String> tokens = cadena.Split(' ').ToList();
+            int cursor = 0;
+            tokens.Add("$");
+
+            Stack<Token> pila = new Stack<Token>();
+            pila.Push(new Token("$", true));
+            pila.Push(inicial.Productor);
+
+            String a = tokens[cursor];
+            Token X = pila.Peek();
+
+            while (X.TokenString != "$")
+            {
+                int xindex = indexOf(noTerminales, X);
+                int aindex = indexOf(terminales, new Token(tinyProcessor.classifyToken(a), true));
+                if (aindex == -1 && a == "$")
+                {
+                    aindex = terminales.Count;
+                }
+                //Console.WriteLine("X: " + X + " A: " + a);
+                if (aindex < terminales.Count && X.TokenString == terminales[aindex].TokenString)
+                {
+                    //Console.WriteLine("Empareja");
+                    pila.Pop();
+                    cursor++;
+                    a = tokens[cursor];
+
+                    while (true)
+                    {
+                        tmp = tmp.parent;
+                        tmp.cursor++;
+                        if (tmp.cursor < tmp.hijos.Count)
+                        {
+                            tmp = tmp.hijos[tmp.cursor];
+                            break;
+                        }
+                    }
+                }
+                else if (X.Terminal)
+                {
+                    Console.WriteLine("Error de sintaxis - terminal");
+                    break;
+                }
+                else if (resTable[xindex][aindex] == null)
+                {
+                    Console.WriteLine("Error de sintaxis - null");
+                    break;
+                }
+                else
+                {
+                    //Console.WriteLine("SALIDA Produccion: " + resTable[xindex][aindex]);
+                    
+                    pila.Pop();
+                    List<Token> prod = resTable[xindex][aindex].Producciones[0];
+                    for (int i = prod.Count - 1; i >= 0; i--)
+                    {
+                        if (prod[i].TokenString != "#")
+                        {
+                            pila.Push(prod[i]);
+                        }
+                    }
+                    foreach (Token t in prod)
+                    {
+                        tmp.addHijo(t);
+                    }
+                    if (tmp.hijos[tmp.cursor].token.TokenString != "#")
+                    {
+                        tmp = tmp.hijos[tmp.cursor];
+                    }
+                    else
+                    {
+                        while (true && tmp.parent != null)
+                        {
+                            tmp = tmp.parent;
+                            tmp.cursor++;
+                            if (tmp.cursor < tmp.hijos.Count && tmp.hijos[tmp.cursor].token.TokenString != "#")
+                            {
+                                tmp = tmp.hijos[tmp.cursor];
+                                break;
+                            }
+                        }
+                    }
+                }
+                X = pila.Peek();
+                //Console.WriteLine("\nPila: " + string.Join(" ", pila) + "\n");
+            }
+
+            // Imprimir arbol
+            int level = 0;
+
+            printTree(tmp);
+
+            void printTree(Nodo n)
+            {
+                for (int i = 0; i < level; i++) Console.Write("\t");
+                Console.WriteLine(n.token.TokenString);
+                level++;
+                foreach (Nodo h in n.hijos)
+                {
+                    printTree(h);
+                }
+                level--;
+            }
+
+            int indexOf(List<Token> list, Token t)
+            {
+                for (int i = 0; i < list.Count; i++)
+                {
+                    if (Token.CompareToken(list[i], t))
+                    {
+                        return i;
+                    }
+                }
+                return -1;
+            }
+
+        }
+
+
+
+        // Completamente inutil
         public void elementosLR()
         {
             Produccion inic = new Produccion(this.inicial.Productor.TokenString + "'");
@@ -736,7 +891,7 @@ namespace compiladoresPr.Algoritmos
 
     }
 
-    internal class Produccion
+    public class Produccion
     {
         private Token productor;
         private List<List<Token>> producciones;
@@ -848,7 +1003,7 @@ namespace compiladoresPr.Algoritmos
         }
     }
 
-    internal class Token
+    public class Token
     {
         private string token;
         private bool terminal;

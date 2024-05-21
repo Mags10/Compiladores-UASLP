@@ -118,11 +118,5 @@ namespace compiladoresPr
         {
             this.Tiny = null;
         }
-
-        private void button3_Click(object sender, EventArgs e)
-        {
-            new TablaAS().ShowDialog();
-
-        }
     }
 }

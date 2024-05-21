@@ -12,17 +12,17 @@ namespace compiladoresPr.Algoritmos
         private Automata identifierA, numberA;
         private String identifier, number;
         private List<String> tokens;
+        private Gramatica g;
 
         // Palabras reservadas de Tiny
-        private List<String> reservedWords = new List<String> { "if", "then", "else", "end", "repeat", "until", "read", "write" };
+        //private List<String> reservedWords = new List<String> { "if", "then", "else", "end", "repeat", "until", "read", "write" };
         // Simbolos de Tiny
-        private List<String> symbols = new List<String> { "+", "-", "*", "/", "=", "<", ">", "(", ")", ";", ":=" };
+        //private List<String> symbols = new List<String> { "+", "-", "*", "/", "=", "<", ">", "(", ")", ";", ":=" };
+        private List<String> reservedWords;
 
-
-        public TinyProcessor(String code, String identifier, String number)
+        public TinyProcessor(String identifier, String number)
         {
-            this.code = code;
-            sanitizeCode();
+            this.initializeLL();
             this.identifier = identifier;
             this.number = number;
             ConvPosFija c = new ConvPosFija();
@@ -30,18 +30,147 @@ namespace compiladoresPr.Algoritmos
             identifierA.transformToDeterministic();
             numberA = new Automata(c.fixExpression(number));
             numberA.transformToDeterministic();
-            tokens = this.code.Split(new char[] { ' ' }).ToList();
-            for (int i = 0; i < tokens.Count;)
-            {
-                if (tokens[i] == "")
-                {
-                    tokens.RemoveAt(i);
-                }
-                else
-                {
-                    i++;
-                }
-            }
+        }
+
+        private void initializeLL()
+        {
+            g = new Gramatica();
+
+            Produccion p;
+
+            #region Producciones
+
+            /*
+                programa -> secuencia-set 
+                secuencia-set -> sentencia secuencia-set' 
+                secuencia-set' -> ; sentencia secuencia-set' | # 
+                sentencia -> sent-if | sent-repeat | sent-assign | sent-read | sent-write 
+                sent-if -> if exp then secuencia-set sent-if' 
+                sent-if' -> end | else secuencia-set end 
+                sent-repeat -> repeat secuencia-set until exp 
+                sent-assign -> identificador := exp 
+                sent-read -> read identificador 
+                sent-write -> write exp 
+                exp -> exp-simple exp' 
+                exp' -> op-comp exp-simple | # 
+                op-comp -> < | > | = 
+                exp-simple -> term exp-simple' 
+                exp-simple' -> opsuma term exp-simple' | # 
+                opsuma -> + | - 
+                term -> factor term' 
+                term' -> opmult factor term' | # 
+                opmult -> * | / 
+                factor -> ( exp ) | numero | identificador
+            */
+
+            p = new Produccion("programa");
+            p.addProduccion("secuencia-set", false);
+            g.addProduccion(p);
+
+            p = new Produccion("secuencia-set");
+            p.addProduccion("sentencia", false, "secuencia-set'", false);
+            g.addProduccion(p);
+
+            p = new Produccion("secuencia-set'");
+            p.addProduccion(";", true, "sentencia", false, "secuencia-set'", false);
+            p.addProduccion("#", true);
+            g.addProduccion(p);
+
+            p = new Produccion("sentencia");
+            p.addProduccion("sent-if", false);
+            p.addProduccion("sent-repeat", false);
+            p.addProduccion("sent-assign", false);
+            p.addProduccion("sent-read", false);
+            p.addProduccion("sent-write", false);
+            g.addProduccion(p);
+
+            p = new Produccion("sent-if");
+            p.addProduccion("if", true, "exp", false, "then", true, "secuencia-set", false, "sent-if'", false);
+            g.addProduccion(p);
+
+            p = new Produccion("sent-if'");
+            p.addProduccion("end", true);
+            p.addProduccion("else", true, "secuencia-set", false, "end", true);
+            g.addProduccion(p);
+
+            p = new Produccion("sent-repeat");
+            p.addProduccion("repeat", true, "secuencia-set", false, "until", true, "exp", false);
+            g.addProduccion(p);
+
+            p = new Produccion("sent-assign");
+            p.addProduccion("identificador", true, ":=", true, "exp", false);
+            g.addProduccion(p);
+
+            p = new Produccion("sent-read");
+            p.addProduccion("read", true, "identificador", true);
+            g.addProduccion(p);
+
+            p = new Produccion("sent-write");
+            p.addProduccion("write", true, "exp", false);
+            g.addProduccion(p);
+
+            p = new Produccion("exp");
+            p.addProduccion("exp-simple", false, "exp'", false);
+            g.addProduccion(p);
+
+            p = new Produccion("exp'");
+            p.addProduccion("op-comp", false, "exp-simple", false);
+            p.addProduccion("#", false);
+            g.addProduccion(p);
+
+            p = new Produccion("op-comp");
+            p.addProduccion("<", true);
+            p.addProduccion(">", true);
+            p.addProduccion("=", true);
+            g.addProduccion(p);
+
+            p = new Produccion("exp-simple");
+            p.addProduccion("term", false, "exp-simple'", false);
+            g.addProduccion(p);
+
+            p = new Produccion("exp-simple'");
+            p.addProduccion("opsuma", false, "term", false, "exp-simple'", false);
+            p.addProduccion("#", true);
+            g.addProduccion(p);
+
+            p = new Produccion("opsuma");
+            p.addProduccion("+", true);
+            p.addProduccion("-", true);
+            g.addProduccion(p);
+
+            p = new Produccion("term");
+            p.addProduccion("factor", false, "term'", false);
+            g.addProduccion(p);
+
+            p = new Produccion("term'");
+            p.addProduccion("opmult", false, "factor", false, "term'", false);
+            p.addProduccion("#", true);
+            g.addProduccion(p);
+
+            p = new Produccion("opmult");
+            p.addProduccion("*", true);
+            p.addProduccion("/", true);
+            g.addProduccion(p);
+
+            p = new Produccion("factor");
+            p.addProduccion("(", true, "exp", false, ")", true);
+            p.addProduccion("numero", true);
+            p.addProduccion("identificador", true);
+            g.addProduccion(p);
+
+            #endregion
+
+            g.calcPrimeros();
+
+            g.calcSiguientes();
+
+            g.calcTabla();
+
+            //g.analisisSintactico("read x ; repeat x := x + 1 ; write x until x < 10");
+
+            Console.WriteLine(g);
+
+            this.reservedWords = g.terminalesString();
         }
 
         private void sanitizeCode()
@@ -54,12 +183,26 @@ namespace compiladoresPr.Algoritmos
             code = code.Trim();
         }
 
-        public List<Tuple<String, String>> clasifyTokens()
+        public List<Tuple<String, String>> clasifyTokens(String code)
         {
+            this.code = code;
+            this.sanitizeCode();
+            tokens = this.code.Split(new char[] { ' ' }).ToList();
+            for (int i = 0; i < tokens.Count;)
+            {
+                if (tokens[i] == "")
+                {
+                    tokens.RemoveAt(i);
+                }
+                else
+                {
+                    i++;
+                }
+            }
             List<Tuple<String, String>> result = new List<Tuple<String, String>>();
             foreach (String token in tokens)
             {
-                if (reservedWords.Contains(token) || symbols.Contains(token)) {
+                if (reservedWords.Contains(token)) {
                     result.Add(new Tuple<String, String>(token, token));
                 }
                 else if (identifierA.isAccepted(token)) {
@@ -75,18 +218,21 @@ namespace compiladoresPr.Algoritmos
             return result;
         }
 
-        public void printTokens()
+        public String classifyToken(String token)
         {
-            Console.WriteLine("Identifier regex: " + identifier);
-            Console.WriteLine("Number regex: " + number);
-            Console.WriteLine("Code: " + code);
-            Console.WriteLine("Tokens:");
-            List<Tuple<String, String>> tokens = clasifyTokens();
-            foreach (Tuple<String, String> token in tokens)
+            if (reservedWords.Contains(token))
             {
-                // Console.WriteLine(token.Item1 + " : " + token.Item2); formated:
-                Console.WriteLine(String.Format("{0,-19} : {1}", token.Item1, token.Item2));
+                return token;
             }
+            else if (identifierA.isAccepted(token))
+            {
+                return "identificador";
+            }
+            else if (numberA.isAccepted(token))
+            {
+                return "numero";
+            }
+            return "error";
         }
 
 

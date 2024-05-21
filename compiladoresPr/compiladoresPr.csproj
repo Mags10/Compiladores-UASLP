@@ -57,6 +57,12 @@
     <Compile Include="Formularios\CalculoConjuntos.Designer.cs">
       <DependentUpon>CalculoConjuntos.cs</DependentUpon>
     </Compile>
+    <Compile Include="Formularios\ClasifTokens.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Formularios\ClasifTokens.Designer.cs">
+      <DependentUpon>ClasifTokens.cs</DependentUpon>
+    </Compile>
     <Compile Include="Formularios\Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -85,6 +91,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Formularios\CalculoConjuntos.resx">
       <DependentUpon>CalculoConjuntos.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Formularios\ClasifTokens.resx">
+      <DependentUpon>ClasifTokens.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Formularios\Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>

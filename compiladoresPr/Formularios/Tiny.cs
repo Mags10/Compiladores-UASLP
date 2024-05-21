@@ -8,12 +8,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace compiladoresPr.Formularios
 {
     public partial class Tiny : Form
     {
         Form1 f;
+        Gramatica g;
+        ClasifTokens clasifTokens;
+
         public Tiny(Form1 f)
         {
             InitializeComponent();
@@ -22,6 +26,10 @@ namespace compiladoresPr.Formularios
 
         private void Tiny_FormClosed(object sender, FormClosedEventArgs e)
         {
+            if (this.clasifTokens != null)
+            {
+                this.clasifTokens.Close();
+            }
             this.f.closedTiny();
         }
 
@@ -33,48 +41,75 @@ namespace compiladoresPr.Formularios
 
         private void richTextBox1_TextChanged(object sender, EventArgs e)
         {
-            if (textBox1.Text == "" || textBox5.Text == "")
-            {
-                return;
-            }
             String code = richTextBox1.Text;
-            String numeroRegex = textBox1.Text;
-            String identificadorRegex  = textBox5.Text;
-            try
-            {
-                TinyProcessor tinyProcessor = new TinyProcessor(code, identificadorRegex, numeroRegex);
-                List<Tuple<String, String>> tokens = tinyProcessor.clasifyTokens();
-                // tinyProcessor.printTokens();
-                dataGridView1.Rows.Clear();
-                dataGridView1.Columns.Clear();
-                dataGridView1.Columns.Add("tipo", "lexema");
-                dataGridView1.Columns.Add("lexema", "tipo");
-                // Auto size the columns
-                dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            String numeroRegex = toolStripTextBox1.Text;
+            String identificadorRegex = toolStripTextBox2.Text;
+            TinyProcessor tinyProcessor = new TinyProcessor(identificadorRegex, numeroRegex);
 
-                foreach (Tuple<String, String> token in tokens)
+            if (this.clasifTokens != null) {
+                if (toolStripTextBox1.Text == "" || toolStripTextBox2.Text == "")
                 {
-                    dataGridView1.Rows.Add(token.Item1, token.Item2);
+                    return;
                 }
-            }catch (Exception ex)
-            {
-                dataGridView1.Rows.Clear();
+                try
+                {
+                    List<Tuple<String, String>> tokens = tinyProcessor.clasifyTokens(code);
+                    // tinyProcessor.printTokens();
+                    clasifTokens.dataGridView1.Rows.Clear();
+                    clasifTokens.dataGridView1.Columns.Clear();
+                    clasifTokens.dataGridView1.Columns.Add("tipo", "lexema");
+                    clasifTokens.dataGridView1.Columns.Add("lexema", "tipo");
+                    // Auto size the columns
+                    clasifTokens.dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+
+                    foreach (Tuple<String, String> token in tokens)
+                    {
+                        clasifTokens.dataGridView1.Rows.Add(token.Item1, token.Item2);
+                    }
+                }catch (Exception ex)
+                {
+                    clasifTokens.dataGridView1.Rows.Clear();
+                }
             }
         }
 
-        private void textBox5_TextChanged(object sender, EventArgs e)
+        private void toolStripButton1_Click(object sender, EventArgs e)
+        {
+            TablaAS tablaAS = new TablaAS(this.g);
+            tablaAS.ShowDialog();
+        }
+
+        public void closedClfToken()
+        {
+            this.clasifTokens = null;
+        }
+
+        private void toolStripTextBox2_TextChanged(object sender, EventArgs e)
         {
             this.richTextBox1_TextChanged(sender, e);
         }
 
-        private void textBox1_TextChanged(object sender, EventArgs e)
+        private void toolStripTextBox1_TextChanged(object sender, EventArgs e)
         {
             this.richTextBox1_TextChanged(sender, e);
         }
 
-        private void groupBox1_Enter(object sender, EventArgs e)
+        private void toolStripButton3_Click(object sender, EventArgs e)
         {
+            if (this.clasifTokens == null)
+            {
+                this.clasifTokens = new ClasifTokens(this);
+                this.clasifTokens.Show();
+                this.richTextBox1_TextChanged(sender, e);
+            }
+            else
+            {
+                this.clasifTokens.Focus();
+            }
+        }
 
+        private void toolStripButton2_Click(object sender, EventArgs e)
+        {
         }
     }
 }
