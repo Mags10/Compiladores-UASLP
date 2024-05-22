@@ -34,13 +34,18 @@ namespace compiladoresPr.Formularios
             {
                 this.clasifTokens.Close();
             }
+            if (this.arbolAn != null)
+            {
+                this.arbolAn.Close();
+            }
             this.f.closedTiny();
         }
 
         private void Tiny_Load(object sender, EventArgs e)
         {
             // set richTextBox1.SelectionTabs to small value to avoid the default 32px tab size
-            richTextBox1.SelectionTabs = new int[] { 10, 20, 30, 40, 50, 60, 70, 80, 90, 100 };
+            //richTextBox1.SelectionTabs = new int[] { 10, 20, 30, 40, 50, 60, 70, 80, 90, 100 };
+            richTextBox1.SelectionTabs = new int[] { 20, 40, 60, 80, 100, 120, 140, 160, 180, 200 };
         }
 
         private void toolStripButton1_Click(object sender, EventArgs e)
@@ -71,7 +76,17 @@ namespace compiladoresPr.Formularios
             {
                 this.tinyProcessor.changeIdentifierRegex(toolStripTextBox2.Text);
                 this.regexIdentifiers = true;
-                //this.richTextBox1_TextChanged(sender, e);
+
+                // Reset the text to black
+                int tmp = richTextBox1.SelectionStart;
+                richTextBox1.SelectAll();
+                richTextBox1.SelectionColor = Color.Black;
+                richTextBox1.SelectionFont = new Font(richTextBox1.Font, FontStyle.Regular);
+                richTextBox1.SelectionStart = tmp;
+
+                //this.toolStripButton4_Click(sender, e);
+
+                richTextBox2.Text = "";
             }
             catch (Exception ex)
             {
@@ -95,7 +110,17 @@ namespace compiladoresPr.Formularios
             try {
                 this.tinyProcessor.changeNumberRegex(toolStripTextBox1.Text);
                 this.regexNumbers = true;
-                //this.richTextBox1_TextChanged(sender, e);
+
+                // Reset the text to black
+                int tmp = richTextBox1.SelectionStart;
+                richTextBox1.SelectAll();
+                richTextBox1.SelectionColor = Color.Black;
+                richTextBox1.SelectionFont = new Font(richTextBox1.Font, FontStyle.Regular);
+                richTextBox1.SelectionStart = tmp;
+
+                //this.toolStripButton4_Click(sender, e);
+
+                richTextBox2.Text = "";
             } 
             catch (Exception ex) { 
                 this.regexNumbers = false;
@@ -136,6 +161,7 @@ namespace compiladoresPr.Formularios
 
         private void toolStripButton4_Click(object sender, EventArgs e)
         {
+            this.richTextBox1_TextChanged(sender, e);
             if (!regexIdentifiers || !regexNumbers)
             {
                 richTextBox2.Text = "Es necesario que las expresiones regulares de los identificadores y los números sean válidas";
@@ -166,44 +192,26 @@ namespace compiladoresPr.Formularios
             int i = 0;
             foreach (Tuple<String, String> token in tokens)
             {
+                // Count the number of characters to find the token in the code
+                while (i < code.Length && (code[i] == ' ' || code[i] == '\n' || code[i] == '\r' || code[i] == '\t')) i++;
                 if (token.Item1 == "Error léxico")
                 {
-                    // find the index of the token in the code by i
-                    int index = code.IndexOf(token.Item2, i);
-                    int line = richTextBox1.GetLineFromCharIndex(index);
-                    int column = index - richTextBox1.GetFirstCharIndexFromLine(line);
+
+                    int line = richTextBox1.GetLineFromCharIndex(i);
+                    int column = i - richTextBox1.GetFirstCharIndexFromLine(line);
                     int selectionStart = richTextBox1.SelectionStart;
                     richTextBox2.Text += "Error léxico en línea " + (line + 1) + " y columna " + (column + 1) + ": No se reconoce el token ' " + token.Item2 + " '\n";
-                    /*richTextBox1.Select(index, token.Item2.Length);
+                    richTextBox1.Select(i, token.Item2.Length);
                     richTextBox1.SelectionColor = Color.Red;
-                    */
-                    // Color red
-                    richTextBox1.Select(index, token.Item2.Length);
-                    richTextBox1.SelectionColor = Color.Red;
-                    // Inmediatly after the token back to black
-                    richTextBox1.Select(index + token.Item2.Length, 0);
+                    richTextBox1.SelectionFont = new Font(richTextBox1.Font, FontStyle.Bold);
+                    richTextBox1.Select(i + token.Item2.Length, 0);
                     richTextBox1.SelectionColor = Color.Black;
+                    richTextBox1.SelectionFont = new Font(richTextBox1.Font, FontStyle.Regular);
 
                     richTextBox1.SelectionStart = selectionStart;
-                    i = index + token.Item2.Length;
                     hasError = true;
                 }
-                else
-                {
-                    // Select from current to back and find a space or \n or \r
-                    // to set it to black
-                    int currentpos = richTextBox1.SelectionStart;
-                    int j = currentpos - 1;
-                    while (j >= 0 && code[j] != ' ' && code[j] != '\n' && code[j] != '\r')
-                    {
-                        j--;
-                    }
-                    j++;
-                    int selectionStart = richTextBox1.SelectionStart;
-                    richTextBox1.Select(j, currentpos - j);
-                    richTextBox1.SelectionColor = Color.Black;
-                    richTextBox1.SelectionStart = selectionStart;
-                }
+                i += token.Item2.Length;
             }
 
             if (this.clasifTokens != null)
@@ -273,7 +281,6 @@ namespace compiladoresPr.Formularios
                         arbolAn.treeView1.ExpandAll();
                     }
 
-
                     richTextBox2.Text += "\nNo se encontraron errores sintácticos";
                 }
                 catch (Exception ex)
@@ -297,6 +304,7 @@ namespace compiladoresPr.Formularios
                         int selectionStart = richTextBox1.SelectionStart;
                         richTextBox1.Select(index, tokens[number].Item2.Length);
                         richTextBox1.SelectionColor = Color.Red;
+                        richTextBox1.SelectionFont = new Font(richTextBox1.Font, FontStyle.Bold);
                         richTextBox1.SelectionStart = selectionStart;
                         richTextBox2.Select(richTextBox2.SelectionStart, 0);
                     }
@@ -322,11 +330,16 @@ namespace compiladoresPr.Formularios
             {
                 this.clasifTokens.dataGridView1.Rows.Clear();
             }
+            if (this.arbolAn != null)
+            {
+                this.arbolAn.treeView1.Nodes.Clear();
+            }
             //this.richTextBox2.Text = "";
             int selectionStart = richTextBox1.SelectionStart;
             // Set all the text to black
             richTextBox1.SelectAll();
             richTextBox1.SelectionColor = Color.Black;
+            richTextBox1.SelectionFont = new Font(richTextBox1.Font, FontStyle.Regular);
 
             // Select from current 0
             richTextBox1.Select(selectionStart, 0);

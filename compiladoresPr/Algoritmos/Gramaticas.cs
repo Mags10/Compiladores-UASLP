@@ -552,6 +552,7 @@ namespace compiladoresPr.Algoritmos
 
         public void analisisSintactico(String cadena)
         {
+            //Console.WriteLine("Analisis Sintactico: " + cadena);
             tmp = new Nodo(inicial.Productor);
             TinyProcessor tinyProcessor = new TinyProcessor("[a-z]+", "[0-9]+");
             List<String> tokens = cadena.Split(' ').ToList();
@@ -656,8 +657,8 @@ namespace compiladoresPr.Algoritmos
 
             void printTree(Nodo n)
             {
-                for (int i = 0; i < level; i++) Console.Write("\t");
-                Console.WriteLine(n.token.TokenString);
+                for (int i = 0; i < level; i++) Console.Write(" ");
+                Console.WriteLine("|" + n.token.TokenString);
                 level++;
                 foreach (Nodo h in n.hijos)
                 {

@@ -56,14 +56,13 @@
             // richTextBox1
             // 
             this.richTextBox1.AcceptsTab = true;
-            this.richTextBox1.AutoWordSelection = true;
             this.richTextBox1.DetectUrls = false;
             this.richTextBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.richTextBox1.Font = new System.Drawing.Font("Cascadia Code", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.richTextBox1.Font = new System.Drawing.Font("Cascadia Code", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.richTextBox1.Location = new System.Drawing.Point(0, 0);
             this.richTextBox1.Margin = new System.Windows.Forms.Padding(0);
             this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.Size = new System.Drawing.Size(499, 312);
+            this.richTextBox1.Size = new System.Drawing.Size(659, 312);
             this.richTextBox1.TabIndex = 16;
             this.richTextBox1.Text = "";
             this.richTextBox1.TextChanged += new System.EventHandler(this.richTextBox1_TextChanged);
@@ -86,7 +85,7 @@
             this.toolStripButton4});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(499, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(659, 25);
             this.toolStrip1.TabIndex = 19;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -148,7 +147,7 @@
             this.toolStripTextBox2.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.toolStripTextBox2.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.toolStripTextBox2.Name = "toolStripTextBox2";
-            this.toolStripTextBox2.Size = new System.Drawing.Size(50, 16);
+            this.toolStripTextBox2.Size = new System.Drawing.Size(100, 16);
             this.toolStripTextBox2.Text = "[a-z]+";
             this.toolStripTextBox2.TextBoxTextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.toolStripTextBox2.TextChanged += new System.EventHandler(this.toolStripTextBox2_TextChanged);
@@ -171,7 +170,7 @@
             this.toolStripTextBox1.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.toolStripTextBox1.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.toolStripTextBox1.Name = "toolStripTextBox1";
-            this.toolStripTextBox1.Size = new System.Drawing.Size(50, 16);
+            this.toolStripTextBox1.Size = new System.Drawing.Size(100, 16);
             this.toolStripTextBox1.Text = "[0-9]+";
             this.toolStripTextBox1.TextBoxTextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.toolStripTextBox1.TextChanged += new System.EventHandler(this.toolStripTextBox1_TextChanged);
@@ -183,12 +182,13 @@
             // 
             // toolStripButton4
             // 
+            this.toolStripButton4.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.toolStripButton4.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.toolStripButton4.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton4.Image")));
             this.toolStripButton4.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton4.Name = "toolStripButton4";
             this.toolStripButton4.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButton4.Text = "toolStripButton4";
+            this.toolStripButton4.Text = "Iniciar análisis";
             this.toolStripButton4.Click += new System.EventHandler(this.toolStripButton4_Click);
             // 
             // splitContainer1
@@ -205,7 +205,7 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.richTextBox2);
-            this.splitContainer1.Size = new System.Drawing.Size(499, 440);
+            this.splitContainer1.Size = new System.Drawing.Size(659, 440);
             this.splitContainer1.SplitterDistance = 312;
             this.splitContainer1.TabIndex = 20;
             // 
@@ -213,10 +213,11 @@
             // 
             this.richTextBox2.DetectUrls = false;
             this.richTextBox2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.richTextBox2.Font = new System.Drawing.Font("Cascadia Code", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.richTextBox2.Location = new System.Drawing.Point(0, 0);
             this.richTextBox2.Name = "richTextBox2";
             this.richTextBox2.ReadOnly = true;
-            this.richTextBox2.Size = new System.Drawing.Size(499, 124);
+            this.richTextBox2.Size = new System.Drawing.Size(659, 124);
             this.richTextBox2.TabIndex = 0;
             this.richTextBox2.Text = "";
             // 
@@ -224,9 +225,10 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(499, 465);
+            this.ClientSize = new System.Drawing.Size(659, 465);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.toolStrip1);
+            this.MinimumSize = new System.Drawing.Size(675, 504);
             this.Name = "Tiny";
             this.Text = "Procesador de lenguaje tiny";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Tiny_FormClosed);
