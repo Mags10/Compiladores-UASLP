@@ -8,11 +8,9 @@ namespace compiladoresPr.Algoritmos
 {
     public class TinyProcessor
     {
-        private string code;
         private Automata identifierA, numberA;
-        private String identifier, number;
         private List<String> tokens;
-        private Gramatica g;
+        public Gramatica g;
 
         // Palabras reservadas de Tiny
         //private List<String> reservedWords = new List<String> { "if", "then", "else", "end", "repeat", "until", "read", "write" };
@@ -23,8 +21,6 @@ namespace compiladoresPr.Algoritmos
         public TinyProcessor(String identifier, String number)
         {
             this.initializeLL();
-            this.identifier = identifier;
-            this.number = number;
             ConvPosFija c = new ConvPosFija();
             identifierA = new Automata(c.fixExpression(identifier));
             identifierA.transformToDeterministic();
@@ -35,7 +31,6 @@ namespace compiladoresPr.Algoritmos
         private void initializeLL()
         {
             g = new Gramatica();
-
             Produccion p;
 
             #region Producciones
@@ -161,33 +156,56 @@ namespace compiladoresPr.Algoritmos
             #endregion
 
             g.calcPrimeros();
-
             g.calcSiguientes();
-
             g.calcTabla();
-
             //g.analisisSintactico("read x ; repeat x := x + 1 ; write x until x < 10");
-
-            Console.WriteLine(g);
-
+            //Console.WriteLine(g);
             this.reservedWords = g.terminalesString();
         }
 
-        private void sanitizeCode()
+        public void analisisSintactico(String code)
+        {
+            String tmpCode = sanitizeCode(code);
+            if (tmpCode == "") throw new Exception("No se ha ingresado código");
+            g.analisisSintactico(tmpCode);
+        }
+
+        public void changeNumberRegex(String number)
+        {
+            ConvPosFija c = new ConvPosFija();
+            numberA = new Automata(c.fixExpression(number));
+            numberA.transformToDeterministic();
+        }
+
+        public void changeIdentifierRegex(String identifier)
+        {
+            ConvPosFija c = new ConvPosFija();
+            identifierA = new Automata(c.fixExpression(identifier));
+            identifierA.transformToDeterministic();
+        }
+
+        public String sanitizeCode(String code)
         {
             // Eliminar espacios en blanco y saltos de linea
             code = code.Replace("\n", " ");
             code = code.Replace("\r", " ");
             code = code.Replace("\t", " ");
-            code = code.Replace("  ", " ");
+            while (code.Contains("  "))
+            {
+                code = code.Replace("  ", " ");
+            }
+            if (code.StartsWith(" "))
+            {
+                code = code.Substring(1);
+            }
             code = code.Trim();
+            return code;
         }
 
         public List<Tuple<String, String>> clasifyTokens(String code)
         {
-            this.code = code;
-            this.sanitizeCode();
-            tokens = this.code.Split(new char[] { ' ' }).ToList();
+            String tmpCode = sanitizeCode(code);
+            tokens = tmpCode.Split(new char[] { ' ' }).ToList();
             for (int i = 0; i < tokens.Count;)
             {
                 if (tokens[i] == "")

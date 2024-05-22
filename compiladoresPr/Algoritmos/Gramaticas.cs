@@ -20,6 +20,7 @@ namespace compiladoresPr.Algoritmos
         private String primLog = "";
         private String sigLog = "";
         private String tablaLog = "";
+        public Nodo tmp;
 
         public String PrimLog
         {
@@ -549,34 +550,9 @@ namespace compiladoresPr.Algoritmos
 
         }
 
-        internal class Nodo
-        {
-            public Token token;
-            public Nodo parent;
-            public List<Nodo> hijos;
-            public int cursor = 0;
-            public Nodo(Token cab)
-            {
-                //Console.WriteLine("Creando nodo: " + cab.TokenString);
-                this.token = cab;
-                this.hijos = new List<Nodo>();
-            }
-            public Nodo(Token cab, Nodo parent)
-            {
-                this.token = cab;
-                this.parent = parent;
-                this.hijos = new List<Nodo>();
-            }
-            public void addHijo(Token t)
-            {
-                //Console.WriteLine("Añade hijo a " + this.token.TokenString + ": " + t.TokenString);
-                this.hijos.Add(new Nodo(t,this));
-            }
-        }
-
         public void analisisSintactico(String cadena)
         {
-            Nodo tmp = new Nodo(inicial.Productor);
+            tmp = new Nodo(inicial.Productor);
             TinyProcessor tinyProcessor = new TinyProcessor("[a-z]+", "[0-9]+");
             List<String> tokens = cadena.Split(' ').ToList();
             int cursor = 0;
@@ -618,13 +594,21 @@ namespace compiladoresPr.Algoritmos
                 }
                 else if (X.Terminal)
                 {
-                    Console.WriteLine("Error de sintaxis - terminal");
-                    break;
+                    //Console.WriteLine("Error de sintaxis - terminal");
+                    if (tokens[cursor] == "$") cursor--;
+                    if (cursor - 1 >= 0)
+                        throw new Exception("Error sintactico (Token #" + cursor + "): No se esperaba ' " + tokens[cursor] + " ' despues de ' " + tokens[cursor - 1] + " '");
+                    else
+                        throw new Exception("Error sintactico (Token #" + cursor + "): No se esperaba ' " + tokens[cursor] + " '");
                 }
                 else if (resTable[xindex][aindex] == null)
                 {
-                    Console.WriteLine("Error de sintaxis - null");
-                    break;
+                    //Console.WriteLine("Error de sintaxis - null");
+                    if (tokens[cursor] == "$") cursor--;
+                    if (cursor-1 >= 0)
+                        throw new Exception("Error sintactico (Token #" + cursor + "): No se esperaba ' " + tokens[cursor] + " ' despues de ' " + tokens[cursor - 1] + " '");
+                    else
+                        throw new Exception("Error sintactico (Token #" + cursor + "): No se esperaba ' " + tokens[cursor] + " '");
                 }
                 else
                 {
@@ -668,7 +652,7 @@ namespace compiladoresPr.Algoritmos
             // Imprimir arbol
             int level = 0;
 
-            printTree(tmp);
+            //printTree(tmp);
 
             void printTree(Nodo n)
             {
@@ -890,6 +874,32 @@ namespace compiladoresPr.Algoritmos
         }
 
     }
+
+    public class Nodo
+    {
+        public Token token;
+        public Nodo parent;
+        public List<Nodo> hijos;
+        public int cursor = 0;
+        public Nodo(Token cab)
+        {
+            //Console.WriteLine("Creando nodo: " + cab.TokenString);
+            this.token = cab;
+            this.hijos = new List<Nodo>();
+        }
+        public Nodo(Token cab, Nodo parent)
+        {
+            this.token = cab;
+            this.parent = parent;
+            this.hijos = new List<Nodo>();
+        }
+        public void addHijo(Token t)
+        {
+            //Console.WriteLine("Añade hijo a " + this.token.TokenString + ": " + t.TokenString);
+            this.hijos.Add(new Nodo(t, this));
+        }
+    }
+
 
     public class Produccion
     {

@@ -51,6 +51,12 @@
     <Compile Include="Algoritmos\ConvPosFija.cs" />
     <Compile Include="Algoritmos\Gramaticas.cs" />
     <Compile Include="Algoritmos\TinyProcessor.cs" />
+    <Compile Include="Formularios\ArbolAnSn.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Formularios\ArbolAnSn.Designer.cs">
+      <DependentUpon>ArbolAnSn.cs</DependentUpon>
+    </Compile>
     <Compile Include="Formularios\CalculoConjuntos.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -69,7 +75,7 @@
     <Compile Include="Formularios\Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
-    <Compile Include="Formularios\Program.cs" />
+    <Compile Include="Algoritmos\Program.cs" />
     <Compile Include="Formularios\TablaAS.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -89,6 +95,9 @@
       <DependentUpon>TransitionTable.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Formularios\ArbolAnSn.resx">
+      <DependentUpon>ArbolAnSn.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Formularios\CalculoConjuntos.resx">
       <DependentUpon>CalculoConjuntos.cs</DependentUpon>
     </EmbeddedResource>
