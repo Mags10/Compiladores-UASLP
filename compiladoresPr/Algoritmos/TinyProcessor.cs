@@ -158,8 +158,7 @@ namespace compiladoresPr.Algoritmos
             g.calcPrimeros();
             g.calcSiguientes();
             g.calcTabla();
-            //g.analisisSintactico("read x ; repeat x := x + 1 ; write x until x < 10");
-            //Console.WriteLine(g);
+
             this.reservedWords = g.terminalesString();
         }
 
