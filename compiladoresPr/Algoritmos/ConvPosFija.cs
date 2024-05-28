@@ -62,7 +62,7 @@ namespace compiladoresPr
                         while (pila.Peek() != '(')
                         {
                             output += pila.Pop();
-                            if (pila.Count == 0) throw new ArgumentException("Sintaxis incorrecta, paréntesis desbalanceados");
+                            if (pila.Count == 0) throw new ArgumentException("Expresión regular incorrecta, paréntesis desbalanceados");
                         }
                         pila.Pop();
                         break;
@@ -87,7 +87,7 @@ namespace compiladoresPr
             while (pila.Count > 0)
             {
                 char tmp = pila.Pop();
-                if (tmp == '(') throw new ArgumentException("Sintaxis incorrecta, paréntesis desbalanceados");
+                if (tmp == '(') throw new ArgumentException("Expresión regular incorrecta, paréntesis desbalanceados");
                 output += tmp;
             }
             return output;
@@ -105,7 +105,7 @@ namespace compiladoresPr
         {
             if (expresion.Count(x => x == '[') != expresion.Count(x => x == ']'))
             {
-                throw new ArgumentException("Sintaxis incorrecta, formato de rango inválido");
+                throw new ArgumentException("Expresión regular incorrecta, formato de rango inválido");
             }
             while (expresion.Contains("[") || expresion.Contains("]"))
             {
@@ -115,15 +115,15 @@ namespace compiladoresPr
                 {
                     if (tmp.Count() != 5)
                     {
-                        throw new ArgumentException("Sintaxis incorrecta, rango de caracteres inválido " + tmp);
+                        throw new ArgumentException("Expresión regular incorrecta, rango de caracteres inválido " + tmp);
                     }
                     if (tmp[1] > tmp[3])
                     {
-                        throw new ArgumentException("Sintaxis incorrecta, rango de caracteres inválido " + tmp);
+                        throw new ArgumentException("Expresión regular incorrecta, rango de caracteres inválido " + tmp);
                     }
                     for (char c = tmp[1]; c <= tmp[3]; c++)
                     {
-                        if (precedencia.ContainsKey(c)) throw new ArgumentException("Sintaxis incorrecta, el rango " + tmp + " contene operaciones reservadas.");
+                        if (precedencia.ContainsKey(c)) throw new ArgumentException("Expresión regular incorrecta, el rango " + tmp + " contene operaciones reservadas.");
                         if (newExp.Count() > 1) newExp += "|";
                         newExp += c;
                     }
@@ -133,7 +133,7 @@ namespace compiladoresPr
                     List<char> lstmp = new List<char>();
                     for (int i = 1; i < tmp.Count() - 1; i++)
                     {
-                        if (precedencia.ContainsKey(tmp[i])) throw new ArgumentException("Sintaxis incorrecta, el rango " + tmp + " contene operaciones reservadas.");
+                        if (precedencia.ContainsKey(tmp[i])) throw new ArgumentException("Expresión regular incorrecta, el rango " + tmp + " contene operaciones reservadas.");
                         if (newExp.Count() > 1) newExp += "|";
                         if (!lstmp.Contains(tmp[i])) newExp += tmp[i];
                         else newExp = newExp.Remove(newExp.Count() - 1);
@@ -166,23 +166,23 @@ namespace compiladoresPr
                 if (index == expresion.Count()) break;
                 if (binaOper.Contains(expresion[index]))
                 {
-                    throw new ArgumentException("Sintaxis incorrecta, operador binario sin operando");
+                    throw new ArgumentException("Expresión regular incorrecta, operador binario sin operando");
                 }
             }
 
             if (unitOper.Contains(expresion[0]) || binaOper.Contains(expresion[0]))
             {
-                throw new ArgumentException("Sintaxis incorrecta, operador binario o unario inválido");
+                throw new ArgumentException("Expresión regular incorrecta, operador binario o unario inválido");
             }
 
             if (expresion.Contains("[") || expresion.Contains("]"))
             {
-                throw new ArgumentException("Sintaxis incorrecta, existen rangos de caracteres no normalizados");
+                throw new ArgumentException("Expresión regular incorrecta, existen rangos de caracteres no normalizados");
             }
 
             if (expresion.Count(x => x == '(') != expresion.Count(x => x == ')'))
             {
-                throw new ArgumentException("Sintaxis incorrecta, paréntesis desbalanceados");
+                throw new ArgumentException("Expresión regular incorrecta, paréntesis desbalanceados");
             }
 
             for (int i = 0; i < expresion.Count(); i++)
@@ -229,7 +229,7 @@ namespace compiladoresPr
                             if (i + 1 == expresion.Count()) return;
                             if (unitOper.Contains(expresion[i + 1]))
                             {
-                                throw new ArgumentException("Sintaxis incorrecta, operador unario no seguido de otro operador unario");
+                                throw new ArgumentException("Expresión regular incorrecta, operador unario no seguido de otro operador unario");
                             }
                             break;
                         case 1:
@@ -237,12 +237,12 @@ namespace compiladoresPr
                             {
                                 if (binaOper.Contains(expresion[i + 1]))
                                 {
-                                    throw new ArgumentException("Sintaxis incorrecta, operador binario no puede ser seguido de otro operador binario");
+                                    throw new ArgumentException("Expresión regular incorrecta, operador binario no puede ser seguido de otro operador binario");
                                 }
                             }
                             else
                             {
-                                throw new ArgumentException("Sintaxis incorrecta, operador binario no seguido de operando");
+                                throw new ArgumentException("Expresión regular incorrecta, operador binario no seguido de operando");
                             }
                         break;
                     }

@@ -58,7 +58,7 @@
             this.panel1.Margin = new System.Windows.Forms.Padding(2);
             this.panel1.Name = "panel1";
             this.panel1.Padding = new System.Windows.Forms.Padding(0, 10, 0, 10);
-            this.panel1.Size = new System.Drawing.Size(401, 67);
+            this.panel1.Size = new System.Drawing.Size(411, 67);
             this.panel1.TabIndex = 0;
             // 
             // label6
@@ -67,9 +67,9 @@
             this.label6.Location = new System.Drawing.Point(0, 31);
             this.label6.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(401, 13);
+            this.label6.Size = new System.Drawing.Size(411, 13);
             this.label6.TabIndex = 9;
-            this.label6.Text = "Juan Daniel Avalos Alaniz";
+            this.label6.Text = "Juan Daniel Ávalos Alaniz";
             this.label6.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label5
@@ -78,9 +78,9 @@
             this.label5.Location = new System.Drawing.Point(0, 44);
             this.label5.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(401, 13);
+            this.label5.Size = new System.Drawing.Size(411, 13);
             this.label5.TabIndex = 8;
-            this.label5.Text = "Miguel Alejandro Gutierrez Silva";
+            this.label5.Text = "Miguel Alejandro Gutiérrez Silva";
             this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label4
@@ -91,9 +91,9 @@
             this.label4.Location = new System.Drawing.Point(0, 10);
             this.label4.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(401, 13);
+            this.label4.Size = new System.Drawing.Size(411, 13);
             this.label4.TabIndex = 7;
-            this.label4.Text = "Fundamentos de Compiladores-Deadline";
+            this.label4.Text = "Fundamentos de Compiladores - Deadline";
             this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // textExpresion
@@ -122,7 +122,7 @@
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(76, 13);
             this.label1.TabIndex = 3;
-            this.label1.Text = "Analisis Lexico";
+            this.label1.Text = "Análisis Léxico";
             // 
             // label2
             // 
@@ -133,7 +133,7 @@
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(109, 13);
             this.label2.TabIndex = 4;
-            this.label2.Text = "Expresion regular:";
+            this.label2.Text = "Expresión regular:";
             // 
             // label3
             // 
@@ -155,7 +155,7 @@
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(117, 13);
             this.label7.TabIndex = 8;
-            this.label7.Text = "Expresion explicita:";
+            this.label7.Text = "Expresión explicita:";
             // 
             // textBox1
             // 
@@ -182,7 +182,7 @@
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(122, 13);
             this.label8.TabIndex = 10;
-            this.label8.Text = "Expresion evaluada:";
+            this.label8.Text = "Expresión evaluada:";
             // 
             // labEva
             // 
@@ -201,7 +201,7 @@
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(175, 23);
             this.button2.TabIndex = 12;
-            this.button2.Text = "Generar automatas";
+            this.button2.Text = "Generar autómatas";
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
@@ -219,7 +219,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(401, 230);
+            this.ClientSize = new System.Drawing.Size(411, 237);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.labEva);
