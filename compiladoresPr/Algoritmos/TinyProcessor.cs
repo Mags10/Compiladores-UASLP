@@ -167,7 +167,7 @@ namespace compiladoresPr.Algoritmos
         {
             String tmpCode = sanitizeCode(code);
             if (tmpCode == "") throw new Exception("No se ha ingresado código");
-            g.analisisSintactico(tmpCode);
+            g.analisisSintactico(tmpCode, this);
         }
 
         public void changeNumberRegex(String number)
@@ -180,8 +180,9 @@ namespace compiladoresPr.Algoritmos
         public void changeIdentifierRegex(String identifier)
         {
             ConvPosFija c = new ConvPosFija();
-            identifierA = new Automata(c.fixExpression(identifier));
-            identifierA.transformToDeterministic();
+            this.identifierA = new Automata(c.fixExpression(identifier));
+            this.identifierA.transformToDeterministic();
+
         }
 
         public String sanitizeCode(String code)

@@ -550,11 +550,11 @@ namespace compiladoresPr.Algoritmos
 
         }
 
-        public void analisisSintactico(String cadena)
+        public void analisisSintactico(String cadena, TinyProcessor tinyProcessor)
         {
             //Console.WriteLine("Analisis Sintactico: " + cadena);
             tmp = new Nodo(inicial.Productor);
-            TinyProcessor tinyProcessor = new TinyProcessor("[a-z]+", "[0-9]+");
+            //TinyProcessor tinyProcessor = new TinyProcessor("[a-z]+", "[0-9]+");
             List<String> tokens = cadena.Split(' ').ToList();
             int cursor = 0;
             tokens.Add("$");
@@ -569,12 +569,13 @@ namespace compiladoresPr.Algoritmos
             while (X.TokenString != "$")
             {
                 int xindex = indexOf(noTerminales, X);
+                Console.WriteLine("clasi: " + tinyProcessor.classifyToken(a));
                 int aindex = indexOf(terminales, new Token(tinyProcessor.classifyToken(a), true));
                 if (aindex == -1 && a == "$")
                 {
                     aindex = terminales.Count;
                 }
-                //Console.WriteLine("X: " + X + " A: " + a);
+                Console.WriteLine("X: " + X + " A: " + a);
                 if (aindex < terminales.Count && X.TokenString == terminales[aindex].TokenString)
                 {
                     //Console.WriteLine("Empareja");
